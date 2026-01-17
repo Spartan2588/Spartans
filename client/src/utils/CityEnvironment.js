@@ -51,7 +51,7 @@ export class CityEnvironment {
     this.renderer.setClearColor(0x0a0a1a, 1);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.container.appendChild(this.renderer.domElement);
   }
 
