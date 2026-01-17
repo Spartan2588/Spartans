@@ -1,0 +1,271 @@
+# LLM PROMPT - PERSON 3: ML/AI ENGINEER 🧠
+
+**Copy this entire message and paste into any LLM (ChatGPT, Claude, etc.) to get help**
+
+---
+
+## MY ROLE
+I am the ML/AI Engineer for a 24-hour hackathon building a multi-domain smart city platform. I'm responsible for creating THREE risk prediction models and the cascading failure logic that makes our project unique.
+
+## PROJECT OVERVIEW
+- **Goal:** Build probabilistic risk models showing how environmental stress cascades into health and food security crises
+- **Tech Stack:** Scikit-learn (GaussianNB, RandomForestClassifier), NumPy, Pandas
+- **Key Innovation:** Multi-domain cascading risk prediction (this is what wins the hackathon)
+- **Team:** 5 people, I own the AI/ML layer
+
+## MY SPECIFIC RESPONSIBILITIES
+
+### Phase 1 (Hours 1-5): Build Three Risk Models
+
+**Model 1: Environmental Risk Predictor**
+- **Inputs:** AQI, traffic_density, temperature, rainfall
+- **Output:** Environmental risk level (low/medium/high) + probability
+- **Algorithm:** GaussianNB (fast, probabilistic, interpretable)
+- **Training:** 1000 synthetic samples with labeled risk levels
+
+**Model 2: Health Risk Predictor**
+- **Inputs:** AQI, hospital_load, respiratory_cases, temperature, environmental_risk_prob
+- **Output:** Health risk level (low/medium/high) + probability
+- **Algorithm:** RandomForestClassifier (captures non-linear relationships)
+- **Key:** Takes environmental risk as input (cascading logic!)
+
+**Model 3: Food Security Risk Predictor** ⭐ DIFFERENTIATOR
+- **Inputs:** crop_supply_index, food_price_index, rainfall, temperature, supply_disruption_events
+- **Output:** Food security risk (low/medium/high) + probability
+- **Algorithm:** GaussianNB
+- **Key:** Shows how environmental factors affect food supply
+
+### Phase 2 (Hours 6-10): Integration & Cascading Logic
+
+**Cascading Risk Engine:**
+```python
+def predict_cascading_risks(metrics):
+    # Step 1: Predict environmental risk
+    env_risk = environmental_model.predict(...)
+    
+    # Step 2: Use env risk as input to health model
+    health_risk = health_model.predict(..., env_risk_prob)
+    
+    # Step 3: Predict food security independently
+    food_risk = food_security_model.predict(...)
+    
+    # Step 4: Calculate overall resilience score
+    resilience_score = calculate_resilience(env_risk, health_risk, food_risk)
+    
+    return {
+        "environmental": {"risk": "high", "prob": 0.78},
+        "health": {"risk": "high", "prob": 0.82},
+        "food_security": {"risk": "medium", "prob": 0.45},
+        "resilience_score": 35,  # 0-100
+        "causal_explanations": [...]
+    }
+```
+
+### Phase 3 (Hours 11-15): Scenario Analysis & ROI
+
+**Scenario Comparison:**
+- Compare baseline state vs intervention state
+- Show probability changes
+- Calculate risk reduction percentages
+
+**Economic Impact Model:**
+```python
+def calculate_roi(baseline_risk, intervention_risk, intervention_cost):
+    # Healthcare cost savings
+    health_savings = (baseline_risk["health"]["prob"] - intervention_risk["health"]["prob"]) * 200_000_000
+    
+    # Food security savings
+    food_savings = (baseline_risk["food_security"]["prob"] - intervention_risk["food_security"]["prob"]) * 50_000_000
+    
+    total_savings = health_savings + food_savings
+    roi = (total_savings - intervention_cost) / intervention_cost
+    
+    return {
+        "intervention_cost": intervention_cost,
+        "health_savings": health_savings,
+        "food_savings": food_savings,
+        "total_savings": total_savings,
+        "roi": roi
+    }
+```
+
+### Phase 4 (Hours 16-25): Polish & Explainability
+
+**Feature Importance:**
+- Use `permutation_importance` from scikit-learn
+- Show which factors contribute most to each risk type
+- Generate natural language explanations
+
+**Confidence Intervals:**
+- Provide uncertainty estimates
+- Show model confidence levels
+
+## TECHNICAL SPECIFICATIONS
+
+### Synthetic Training Data Generation
+
+**For Environmental Risk:**
+```python
+# Generate 1000 samples
+X_train = []
+y_train = []
+
+for i in range(1000):
+    aqi = random.uniform(0, 500)
+    traffic = random.choice([0, 1, 2])  # low, medium, high
+    temp = random.uniform(25, 45)
+    rain = random.uniform(0, 100)
+    
+    # Labeling rules
+    if aqi > 200 or (aqi > 150 and traffic == 2):
+        risk = "high"
+    elif aqi > 100 or traffic == 2:
+        risk = "medium"
+    else:
+        risk = "low"
+    
+    X_train.append([aqi, traffic, temp, rain])
+    y_train.append(risk)
+```
+
+**For Health Risk (with cascading):**
+```python
+# Include environmental_risk_prob as feature
+for i in range(1000):
+    aqi = random.uniform(0, 500)
+    hospital_load = random.uniform(0.4, 0.95)
+    respiratory_cases = int(random.uniform(50, 400))
+    env_risk_prob = calculate_env_risk_prob(aqi, ...)
+    
+    # Cascading logic
+    if env_risk_prob > 0.7 and hospital_load > 0.75:
+        risk = "high"
+    elif env_risk_prob > 0.5 or hospital_load > 0.65:
+        risk = "medium"
+    else:
+        risk = "low"
+```
+
+**For Food Security:**
+```python
+for i in range(1000):
+    crop_supply = random.uniform(40, 100)
+    food_price = random.uniform(80, 150)
+    rain = random.uniform(0, 100)
+    disruptions = random.randint(0, 5)
+    
+    # Rules: low supply OR high prices OR many disruptions
+    if crop_supply < 60 or food_price > 130 or disruptions > 3:
+        risk = "high"
+    elif crop_supply < 75 or food_price > 110:
+        risk = "medium"
+    else:
+        risk = "low"
+```
+
+### Model Training Code Structure
+
+```python
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.inspection import permutation_importance
+import numpy as np
+import pickle
+
+class MultiDomainRiskEngine:
+    def __init__(self):
+        self.env_model = GaussianNB()
+        self.health_model = RandomForestClassifier(n_estimators=50, max_depth=5)
+        self.food_model = GaussianNB()
+        
+        self.label_encoder = LabelEncoder()
+        self.scaler = StandardScaler()
+        
+        self._train_all_models()
+    
+    def _train_all_models(self):
+        """Generate synthetic data and train all three models"""
+        # Generate training data
+        X_env, y_env = self._generate_env_training_data()
+        X_health, y_health = self._generate_health_training_data()
+        X_food, y_food = self._generate_food_training_data()
+        
+        # Train models
+        self.env_model.fit(X_env, y_env)
+        self.health_model.fit(X_health, y_health)
+        self.food_model.fit(X_food, y_food)
+    
+    def predict_all_risks(self, metrics):
+        """Main prediction method - returns all three risk types"""
+        pass
+    
+    def scenario_analysis(self, baseline_metrics, intervention_metrics):
+        """Compare two scenarios and show differences"""
+        pass
+    
+    def get_feature_importance(self):
+        """Return which features matter most for each model"""
+        pass
+    
+    def explain_prediction(self, metrics):
+        """Generate natural language explanation"""
+        pass
+```
+
+## CAUSAL EXPLANATION GENERATION
+
+Generate explanations like:
+- "High AQI (145) increases environmental risk by 40%"
+- "Environmental stress (78% probability) cascades into health risk, raising it to 82%"
+- "Low crop supply (60%) combined with supply disruptions (3 events) creates food security risk of 65%"
+- "Hospital load at 72% compounds health stress from poor air quality"
+
+## WHAT I NEED HELP WITH
+
+When I ask you questions, help me:
+1. Write Scikit-learn training code for all three models
+2. Generate realistic synthetic training data with proper correlations
+3. Implement cascading logic where one model's output feeds another
+4. Calculate feature importance and generate explanations
+5. Build ROI calculator with realistic cost models
+6. Handle probability calibration and confidence intervals
+7. Optimize model performance (accuracy, speed)
+8. Debug ML issues (overfitting, poor predictions)
+
+## DELIVERABLES
+
+**File: model/risk_engine.py**
+- MultiDomainRiskEngine class
+- All three trained models
+- Cascading prediction logic
+- Scenario comparison
+
+**File: model/economic_model.py**
+- ROI calculator
+- Cost-benefit analysis
+- Savings estimation
+
+**File: model/explainer.py**
+- Feature importance
+- Natural language explanations
+- Confidence intervals
+
+## PERFORMANCE TARGETS
+- Training time: <5 seconds total (all three models)
+- Prediction time: <100ms per prediction
+- Accuracy: >75% on validation set (not critical, this is a demo)
+- Interpretability: Clear probability outputs with explanations
+
+## CURRENT TASK
+[Describe what you're working on right now, then ask your question]
+
+---
+
+**Example questions to ask me:**
+- "Write complete code for the environmental risk model with synthetic training data"
+- "Implement cascading logic where environmental risk feeds into health risk prediction"
+- "Create an ROI calculator that estimates healthcare savings from risk reduction"
+- "Generate feature importance visualization data for all three models"
+- "Write natural language explanation generator for risk predictions"
+- "Help me debug: my health risk model always predicts 'high', what's wrong?"

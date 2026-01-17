@@ -1,0 +1,58 @@
+.platform {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.platform-hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.platform-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: slideInUp 1s ease-out;
+}
+
+.platform-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.platform-hero-content p {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.platform-section {
+  position: relative;
+  z-index: 3;
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 10, 26, 0.7) 0%, rgba(10, 10, 26, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(167, 139, 250, 0.1);
+}
+
+@media (max-width: 768px) {
+  .platform-hero {
+    height: 50vh;
+  }
+
+  .platform-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .platform-section {
+    padding: 4rem 1.5rem;
+  }
+}

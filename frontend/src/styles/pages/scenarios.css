@@ -1,0 +1,85 @@
+.scenarios {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.scenarios-hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scenarios-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: slideInUp 1s ease-out;
+}
+
+.scenarios-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.scenarios-hero-content p {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.scenarios-section {
+  position: relative;
+  z-index: 3;
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 10, 26, 0.7) 0%, rgba(10, 10, 26, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(167, 139, 250, 0.1);
+}
+
+.chat-container {
+  margin-bottom: 3rem;
+}
+
+.scenarios-content {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(30, 30, 60, 0.3) 0%, rgba(15, 15, 35, 0.3) 100%);
+  border: 1px solid rgba(167, 139, 250, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.scenarios-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.scenarios-content p {
+  font-size: 1rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .scenarios-hero {
+    height: 50vh;
+  }
+
+  .scenarios-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .scenarios-section {
+    padding: 4rem 1.5rem;
+  }
+}

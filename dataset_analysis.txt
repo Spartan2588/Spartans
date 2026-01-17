@@ -1,0 +1,287 @@
+﻿============================================================
+AVAILABLE DATASETS AND COLUMNS
+============================================================
+
+[1] TRAFFIC VOLUME DATA
+----------------------------------------
+Shape: (10, 15)
+Columns:
+  - date_time
+  - is_holiday
+  - air_pollution_index
+  - humidity
+  - wind_speed
+  - wind_direction
+  - visibility_in_miles
+  - dew_point
+  - temperature
+  - rain_p_h
+  - snow_p_h
+  - clouds_all
+  - weather_type
+  - weather_description
+  - traffic_volume
+
+Sample values:
+             date_time  is_holiday  air_pollution_index  humidity  wind_speed  wind_direction  visibility_in_miles  dew_point  temperature  rain_p_h  snow_p_h  clouds_all weather_type weather_description  traffic_volume
+0  2012-10-02 09:00:00         NaN                  121        89           2             329                    1          1       288.28         0         0          40       Clouds    scattered clouds            5545
+1  2012-10-02 10:00:00         NaN                  178        67           3             330                    1          1       289.36         0         0          75       Clouds       broken clouds            4516
+2  2012-10-02 11:00:00         NaN                  113        66           3             329                    2          2       289.58         0         0          90       Clouds     overcast clouds            4767
+
+
+[2] AGRICULTURE PRICE DATA
+----------------------------------------
+Shape: (10, 10)
+Columns:
+  - STATE
+  - District Name
+  - Market Name
+  - Commodity
+  - Variety
+  - Grade
+  - Min_Price
+  - Max_Price
+  - Modal_Price
+  - Price Date
+
+Sample values:
+           STATE District Name        Market Name Commodity           Variety Grade  Min_Price  Max_Price  Modal_Price Price Date
+0    Maharashtra        nashik  Lasalgaon(Niphad)     Wheat  Maharashtra 2189   FAQ       2172       2399         2300   6/6/2023
+1    Maharashtra        satara              Patan    Tomato             Other   FAQ       1000       1500         1250   6/6/2023
+2  Uttar Pradesh      mainpuri              Bewar    Potato             Local   FAQ        800        820          810   6/6/2023
+
+
+[3] INDIA AQI DATA
+----------------------------------------
+Shape: (10, 31)
+Columns:
+  - city
+  - state
+  - latitude
+  - longitude
+  - datetime
+  - month
+  - day_name
+  - is_weekend
+  - season
+  - time_of_day
+  - humidity_percent
+  - dew_point_c
+  - wind_gusts_kmh
+  - precipitation_mm
+  - is_raining
+  - heavy_rain
+  - pressure_msl_hpa
+  - cloud_cover_percent
+  - pm2_5_ugm3
+  - pm10_ugm3
+  - co_ugm3
+  - no2_ugm3
+  - so2_ugm3
+  - o3_ugm3
+  - dust_ugm3
+  - aod
+  - us_aqi
+  - aqi_category
+  - pm25_category_india
+  - festival_period
+  - crop_burning_season
+
+Sample values (first 8 columns):
+       city    state  latitude  longitude             datetime  month day_name  is_weekend
+0  agartala  tripura   23.8315    91.2868  2022-08-05 00:00:00    8.0   friday       False
+1  agartala  tripura   23.8315    91.2868  2022-08-05 01:00:00    8.0   friday       False
+2  agartala  tripura   23.8315    91.2868  2022-08-05 02:00:00    8.0   friday       False
+
+
+[4] HOSPITAL RESPIRATORY DATA
+----------------------------------------
+Shape: (10, 157)
+Columns:
+  - Week Ending Date
+  - Geographic aggregation
+  - Number of Inpatient Beds
+  - Number of Adult Inpatient Beds
+  - Number of Pediatric Inpatient beds
+  - Number of Inpatient Beds Occupied
+  - Number of Adult Inpatient Beds Occupied
+  - Number of Pediatric Inpatient Beds Occupied
+  - Number of ICU Beds
+  - Number of Adult ICU Beds
+  - Number of Pediatric ICU Beds
+  - Number of ICU Beds Occupied
+  - Number of Adult ICU Beds Occupied
+  - Number of Pediatric ICU Beds Occupied
+  - Number of Adult Patients Hospitalized with COVID-19
+  - Number of Pediatric Patients Hospitalized with COVID-19
+  - Total Patients Hospitalized with COVID-19
+  - Number of Adult Patients Hospitalized with Influenza
+  - Number of Pedatric Patients Hospitalized with Influenza
+  - Total Patients Hospitalized with Influenza
+  - Number of Adult Patients Hospitalized with RSV
+  - Number of Pediatric Patients Hospitalized with RSV
+  - Total Patients Hospitalized with RSV
+  - Number of Adult ICU Patients Hospitalized with COVID-19
+  - Number of Pediatric ICU Patients Hospitalized with COVID-19
+  - Total ICU Patients Hospitalized with COVID-19 
+  - Number of Adult ICU Patients Hospitalized with Influenza
+  - Number of Pediatric ICU Patients Hospitalized with Influenza
+  - Total ICU Patients Hospitalized with Influenza
+  - Number of Adult ICU Patients Hospitalized with RSV
+  - Number of Pediatric ICU Patients Hospitalized with RSV
+  - Total ICU Patients Hospitalized with RSV
+  - Number of Pediatric COVID-19 Admissions, 0-4 years
+  - Number of Pediatric COVID-19 Admissions, 5-17 years
+  - Total Pediatric COVID-19 Admissions
+  - Number of Adult COVID-19 Admissions, 18-49 years
+  - Number of Adult COVID-19 Admissions, 50-64 years
+  - Number of Adult COVID-19 Admissions, 65-74 years
+  - Number of Adult COVID-19 Admissions, 75 plus
+  - Total Adult COVID-19 Admissions
+  - Number of COVID-19 Admissions, unknown age
+  - Total COVID-19 Admissions
+  - Number of Pediatric Influenza Admissions, 0-4 years
+  - Number of Pediatric Influenza Admissions, 5-17 years
+  - Total Pediatric Influenza Admissions
+  - Number of Adult Influenza Admissions, 18-49 years
+  - Number of Adult Influenza Admissions, 50-64 years
+  - Number of Adult Influenza Admissions, 65-74 years
+  - Number of Adult Influenza Admissions, 75 plus years
+  - Total Adult Influenza Admissions
+  - Number of Influenza Admissions, unknown age
+  - Total Influenza Admissions
+  - Number of Pediatric RSV Admissions, 0-4 years
+  - Number of Pediatric RSV Admissions, 5-17 years
+  - Total Pediatric RSV Admissions
+  - Number of Adult RSV Admissions, 18-49 years
+  - Number of Adult RSV Admissions, 50-64 years
+  - Number of Adult RSV Admissions, 65-74 years
+  - Number of Adult RSV Admissions, 75 plus years
+  - Total Adult RSV Admissions
+  - Number of RSV Admissions, unknown age
+  - Total RSV Admissions
+  - Percent Inpatient Beds Occupied
+  - Percent Inpatient Beds Occupied by COVID-19 Patients
+  - Percent Inpatient Beds Occupied by Influenza Patients
+  - Percent Inpatient Beds Occupied by RSV Patients
+  - Percent ICU Beds Occupied
+  - Percent ICU Beds Occupied by COVID-19 Patients
+  - Percent ICU Beds Occupied by Influenza Patients
+  - Percent ICU Beds Occupied by RSV Patients
+  - Percent Adult COVID-19 Admissions
+  - Percent Pediatric COVID-19 Admissions
+  - Percent Adult Influenza Admissions
+  - Percent Pediatric Influenza Admissions
+  - Percent Adult RSV Admissions
+  - Percent Pediatric RSV Admissions
+  - Number Hospitals Reporting Number of Inpatient Beds
+  - Number Hospitals Reporting Number of Inpatient Beds Occupied
+  - Number Hospitals Reporting Number of ICU Beds 
+  - Number Hospitals Reporting Number of ICU Beds Occupied
+  - Number Hospitals Reporting Total Patients Hospitalized with COVID-19
+  - Number Hospitals Reporting TotalPatients Hospitalized with Influenza
+  - Number Hospitals Reporting Total Patients Hospitalized with RSV
+  - Number Hospitals Reporting ICU Patients Hospitalized with COVID-19 
+  - Number Hospitals Reporting ICU Patients Hospitalized with Influenza
+  - Number Hospitals Reporting ICU Patients Hospitalized with RSV
+  - Number Hospitals Reporting Pediatric COVID-19 Admissions
+  - Number Hospitals Reporting Adult COVID-19 Admissions
+  - Number Hospitals Reporting COVID-19 Admissions
+  - Number Hospitals Reporting Pediatric Influenza Admissions
+  - Number Hospitals Reporting Adult Influenza Admissions
+  - Number Hospitals Reporting Influenza Admissions
+  - Number Hospitals Reporting Pediatric RSV Admissions
+  - Number Hospitals Reporting Adult RSV Admissions
+  - Number Hospitals Reporting RSV Admissions
+  - Number Hospitals Reporting Percent Inpatient Beds Occupied
+  - Number Hospitals Reporting Percent ICU Beds Occupied
+  - Number Hospitals Reporting Percent Inpatient Beds Occupied by COVID-19 Patients
+  - Number Hospitals Reporting Percent Inpatient Beds Occupied by Influenza Patients
+  - Number Hospitals Reporting Percent Inpatient Beds Occupied by RSV Patients
+  - Number Hospitals Reporting Percent ICU Beds Occupied by COVID-19 Patients
+  - Number Hospitals Reporting Percent ICU Beds Occupied by Influenza Patients
+  - Number Hospitals Reporting Percent ICU Beds Occupied by RSV Patients
+  - Percent Hospitals Reporting Number of Inpatient Beds
+  - Percent Hospitals Reporting Number of Inpatient Beds Occupied
+  - Percent Hospitals Reporting Number of ICU Beds 
+  - Percent Hospitals Reporting Number of ICU Beds Occupied
+  - Percent Hospitals Reporting Total Patients Hospitalized with COVID-19
+  - Percent Hospitals Reporting TotalPatients Hospitalized with Influenza
+  - Percent Hospitals Reporting Total Patients Hospitalized with RSV
+  - Percent Hospitals Reporting ICU Patients Hospitalized with COVID-19 
+  - Percent Hospitals Reporting ICU Patients Hospitalized with Influenza
+  - Percent Hospitals Reporting ICU Patients Hospitalized with RSV
+  - Percent Hospitals Reporting Pediatric COVID-19 Admissions
+  - Percent Hospitals Reporting Adult COVID-19 Admissions
+  - Percent Hospitals Reporting COVID-19 Admissions
+  - Percent Hospitals Reporting Pediatric Influenza Admissions
+  - Percent Hospitals Reporting Adult Influenza Admissions
+  - Percent Hospitals Reporting Influenza Admissions
+  - Percent Hospitals Reporting Pediatric RSV Admissions
+  - Percent Hospitals Reporting Adult RSV Admissions
+  - Percent Hospitals Reporting RSV Admissions
+  - Percent Hospitals Reporting Percent Inpatient Beds Occupied
+  - Percent Hospitals Reporting Percent ICU Beds Occupied
+  - Percent Hospitals Reporting Percent Inpatient Beds Occupied by COVID-19 Patients
+  - Percent Hospitals Reporting Percent Inpatient Beds Occupied by Influenza Patients
+  - Percent Hospitals Reporting Percent Inpatient Beds Occupied by RSV Patients
+  - Percent Hospitals Reporting Percent ICU Beds Occupied by COVID-19 Patients
+  - Percent Hospitals Reporting Percent ICU Beds Occupied by Influenza Patients
+  - Percent Hospitals Reporting Percent ICU Beds Occupied by RSV Patients
+  - Absolute Change in the Percent Hospitals Reporting Number of Inpatient Beds from Prior Week
+  - Absolute Change in the Absolute Change in the Percent Hospitals Reporting Number of Inpatient Beds Occupied from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Number of ICU Beds from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Number of ICU Beds Occupied from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Total Patients Hospitalized with COVID-19 from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting TotalPatients Hospitalized with Influenza from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Total Patients Hospitalized with RSV from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting ICU Patients Hospitalized with COVID-19 from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting ICU Patients Hospitalized with Influenza from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting ICU Patients Hospitalized with RSV from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Pediatric COVID-19 Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Adult COVID-19 Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting COVID-19 Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Pediatric Influenza Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Adult Influenza Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting  Influenza Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Pediatric RSV Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Adult RSV Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting RSV Admissions from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent Inpatient Beds Occupied from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent ICU Beds Occupied from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent Inpatient Beds Occupied by COVID-19 Patients from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent Inpatient Beds Occupied by Influenza Patients from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent Inpatient Beds Occupied by RSV Patients from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent ICU Beds Occupied by COVID-19 Patients from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent ICU Beds Occupied by Influenza Patients from Prior Week
+  - Absolute Change in the Percent Hospitals Reporting Percent ICU Beds Occupied by RSV Patients from Prior Week
+
+Sample values (first 6 columns):
+  Week Ending Date Geographic aggregation  Number of Inpatient Beds  Number of Adult Inpatient Beds  Number of Pediatric Inpatient beds  Number of Inpatient Beds Occupied
+0       2023-08-12                     WA                     10650                            9282                                 482                               9040
+1       2023-08-12                     WI                     10752                            9824                                 425                               7574
+2       2023-08-12                     WV                      4813                            4556                                 256                               3701
+
+============================================================
+DATASET SUMMARY
+============================================================
+
+ENVIRONMENTAL MODEL needs:
+  - AQI data (from aqi_india dataset)
+  - Traffic density (from TrafficVolumeData)
+  - Temperature (may be in AQI dataset)
+  - Rainfall (may need to derive or use weather data)
+
+HEALTH MODEL needs:
+  - AQI data
+  - Hospital load (from hospital respiratory data)
+  - Respiratory cases (from hospital data)
+  - Temperature
+
+FOOD SECURITY MODEL needs:
+  - Crop supply index (derive from Agriculture prices)
+  - Food price index (from Agriculture prices)
+  - Rainfall
+  - Temperature
+  - Supply disruption events (derive from price volatility)
+
