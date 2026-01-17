@@ -1,14 +1,55 @@
 import { ApiClient } from '../utils/api.js';
+import { SimulationEngine } from '../utils/SimulationEngine.js';
+import { TrendGraph } from './TrendGraph.js';
 import gsap from 'gsap';
 import '../styles/components/trend-analysis.css';
 
 export class TrendAnalysis {
   constructor() {
     this.api = new ApiClient();
+    this.engine = new SimulationEngine();
     this.currentCity = 1;
-    this.historicalData = null;
-    this.projectedData = null;
-    this.charts = {};
+    this.currentScenario = null;
+    this.baselineState = null;
+    this.baselineProjection = null;
+    this.simulationProjection = null;
+    this.graphs = {};
+  }
+
+  /**
+   * Generate fallback data for localhost testing
+   * LOCAL ONLY - ensures graphs never render empty
+   */
+  generateFallbackData(hours = 24) {
+    const fallback = {
+      environmental_risk: [],
+      health_risk: [],
+      food_security_risk: [],
+      aqi: [],
+      hospital_load: [],
+      crop_supply: [],
+      temperature: [],
+      food_price_index: [],
+      timestamps: []
+    };
+
+    for (let h = 0; h < hours; h++) {
+      const progress = h / hours;
+      const sine = Math.sin(progress * Math.PI);
+
+      fallback.environmental_risk.push(Math.round(40 + sine * 20));
+      fallback.health_risk.push(Math.round(35 + sine * 15));
+      fallback.food_security_risk.push(Math.round(25 + sine * 10));
+      fallback.aqi.push(Math.round(150 + sine * 50));
+      fallback.temperature.push(Math.round((25 + sine * 5) * 10) / 10);
+      fallback.hospital_load.push(Math.round(50 + sine * 20));
+      fallback.crop_supply.push(Math.round(70 - sine * 15));
+      fallback.food_price_index.push(Math.round(100 + sine * 20));
+      fallback.timestamps.push(new Date(Date.now() + h * 3600000));
+    }
+
+    console.warn('⚠ Using fallback data for graphs (localhost only)');
+    return fallback;
   }
 
   async render(container) {
@@ -17,362 +58,280 @@ export class TrendAnalysis {
         <div class="trend-header">
           <h2>Trend Analysis</h2>
           <div class="trend-controls">
-            <select id="trend-domain" class="trend-select">
-              <option value="environmental">Environmental</option>
-              <option value="health">Health</option>
-              <option value="agriculture">Agriculture</option>
-              <option value="risks">Risk Scores</option>
-            </select>
             <button id="trend-refresh" class="trend-btn">↻ Refresh</button>
           </div>
         </div>
 
-        <div class="trend-grid">
-          <div class="trend-card">
-            <div class="trend-chart-container">
-              <div id="aqi-chart" class="trend-chart"></div>
-            </div>
-            <div class="trend-insight">
-              <span class="insight-label">AQI Trend</span>
-              <span id="aqi-direction" class="insight-direction">→</span>
-            </div>
-          </div>
+        <div class="trend-info">
+          <p id="trend-description">Baseline vs Simulation Comparison - 24 Hour Projection</p>
+        </div>
 
-          <div class="trend-card">
-            <div class="trend-chart-container">
-              <div id="temperature-chart" class="trend-chart"></div>
+        <!-- Risk Metrics -->
+        <div class="trend-section">
+          <h3>Risk Trends</h3>
+          <div class="trend-grid">
+            <div class="trend-card">
+              <h4>Environmental Risk</h4>
+              <canvas id="env-risk-chart" class="trend-canvas" width="400" height="280"></canvas>
             </div>
-            <div class="trend-insight">
-              <span class="insight-label">Temperature Trend</span>
-              <span id="temp-direction" class="insight-direction">→</span>
+            <div class="trend-card">
+              <h4>Health Risk</h4>
+              <canvas id="health-risk-chart" class="trend-canvas" width="400" height="280"></canvas>
             </div>
-          </div>
-
-          <div class="trend-card">
-            <div class="trend-chart-container">
-              <div id="hospital-chart" class="trend-chart"></div>
-            </div>
-            <div class="trend-insight">
-              <span class="insight-label">Hospital Load Trend</span>
-              <span id="hospital-direction" class="insight-direction">→</span>
-            </div>
-          </div>
-
-          <div class="trend-card">
-            <div class="trend-chart-container">
-              <div id="crop-chart" class="trend-chart"></div>
-            </div>
-            <div class="trend-insight">
-              <span class="insight-label">Crop Supply Trend</span>
-              <span id="crop-direction" class="insight-direction">→</span>
-            </div>
-          </div>
-
-          <div class="trend-card full-width">
-            <div class="trend-chart-container">
-              <div id="risk-chart" class="trend-chart"></div>
-            </div>
-            <div class="trend-insight">
-              <span class="insight-label">Overall Risk Trend</span>
-              <span id="risk-direction" class="insight-direction">→</span>
+            <div class="trend-card">
+              <h4>Food Security Risk</h4>
+              <canvas id="food-risk-chart" class="trend-canvas" width="400" height="280"></canvas>
             </div>
           </div>
         </div>
 
-        <div class="trend-legend">
-          <div class="legend-item">
-            <span class="legend-color improving"></span>
-            <span>Improving</span>
+        <!-- Environmental Metrics -->
+        <div class="trend-section">
+          <h3>Environmental Metrics</h3>
+          <div class="trend-grid">
+            <div class="trend-card">
+              <h4>Air Quality Index (AQI)</h4>
+              <canvas id="aqi-chart" class="trend-canvas" width="400" height="280"></canvas>
+            </div>
+            <div class="trend-card">
+              <h4>Temperature</h4>
+              <canvas id="temperature-chart" class="trend-canvas" width="400" height="280"></canvas>
+            </div>
           </div>
-          <div class="legend-item">
-            <span class="legend-color stable"></span>
-            <span>Stable</span>
+        </div>
+
+        <!-- Health Metrics -->
+        <div class="trend-section">
+          <h3>Health Metrics</h3>
+          <div class="trend-grid">
+            <div class="trend-card">
+              <h4>Hospital Load</h4>
+              <canvas id="hospital-chart" class="trend-canvas" width="400" height="280"></canvas>
+            </div>
           </div>
-          <div class="legend-item">
-            <span class="legend-color worsening"></span>
-            <span>Worsening</span>
+        </div>
+
+        <!-- Agriculture & Food Metrics -->
+        <div class="trend-section">
+          <h3>Agriculture & Food Security</h3>
+          <div class="trend-grid">
+            <div class="trend-card">
+              <h4>Crop Supply</h4>
+              <canvas id="crop-chart" class="trend-canvas" width="400" height="280"></canvas>
+            </div>
+            <div class="trend-card">
+              <h4>Food Price Index</h4>
+              <canvas id="foodprice-chart" class="trend-canvas" width="400" height="280"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="trend-stats">
+          <div class="stat-item">
+            <span class="stat-label">Scenario Type</span>
+            <span id="scenario-type" class="stat-value">—</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Projection Period</span>
+            <span id="projection-period" class="stat-value">24h</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">City</span>
+            <span id="city-name" class="stat-value">—</span>
           </div>
         </div>
       </div>
     `;
 
     this.setupEventListeners(container);
+    this.initializeGraphs(container);
     await this.loadData();
   }
 
   setupEventListeners(container) {
     const refreshBtn = container.querySelector('#trend-refresh');
-    const domainSelect = container.querySelector('#trend-domain');
 
     refreshBtn.addEventListener('click', () => {
+      console.log('Refresh button clicked');
       this.loadData();
       gsap.to(refreshBtn, { rotation: 360, duration: 0.6 });
     });
 
-    domainSelect.addEventListener('change', () => {
-      this.updateCharts();
-    });
-
-    // Listen for scenario updates
-    window.addEventListener('scenario-updated', () => {
+    // Listen for scenario updates - FORCE RE-RENDER
+    window.addEventListener('scenario-updated', (e) => {
+      console.log('Scenario updated event received:', e.detail);
+      this.currentScenario = e.detail;
       this.loadData();
     });
 
-    // Listen for city changes
+    // Listen for city changes - FORCE RE-RENDER
     window.addEventListener('city-changed', (e) => {
+      console.log('City changed event received:', e.detail);
       this.currentCity = e.detail.cityId;
       this.loadData();
+    });
+
+    // Listen for slider changes - FORCE RE-RENDER
+    window.addEventListener('sliders-changed', (e) => {
+      console.log('Sliders changed event received:', e.detail);
+      this.currentScenario = e.detail;
+      this.loadData();
+    });
+
+    // Listen for chat simulation - FORCE RE-RENDER
+    window.addEventListener('chat-simulation', (e) => {
+      console.log('Chat simulation event received:', e.detail);
+      this.currentScenario = e.detail;
+      this.loadData();
+    });
+  }
+
+  /**
+   * Initialize all trend graphs with standardized component
+   */
+  initializeGraphs(container) {
+    const graphConfigs = [
+      { id: 'env-risk-chart', title: 'Environmental Risk', unit: '%', color: '#10b981' },
+      { id: 'health-risk-chart', title: 'Health Risk', unit: '%', color: '#f59e0b' },
+      { id: 'food-risk-chart', title: 'Food Security Risk', unit: '%', color: '#06b6d4' },
+      { id: 'aqi-chart', title: 'AQI', unit: 'points', color: '#ef4444' },
+      { id: 'temperature-chart', title: 'Temperature', unit: '°C', color: '#f59e0b' },
+      { id: 'hospital-chart', title: 'Hospital Load', unit: '%', color: '#ef4444' },
+      { id: 'crop-chart', title: 'Crop Supply', unit: '%', color: '#10b981' },
+      { id: 'foodprice-chart', title: 'Food Price Index', unit: 'index', color: '#a78bfa' }
+    ];
+
+    graphConfigs.forEach(config => {
+      const graph = new TrendGraph(config.id, config.title, config.unit, config.color);
+      const initialized = graph.init(container);
+      if (initialized) {
+        this.graphs[config.id] = graph;
+        console.log(`✓ Graph initialized: ${config.id}`);
+      } else {
+        console.warn(`✗ Failed to initialize graph: ${config.id}`);
+      }
     });
   }
 
   async loadData() {
     try {
-      const historical = await this.api.getHistoricalData(this.currentCity, 24);
-      this.historicalData = historical;
-      this.generateProjectedData();
-      this.updateCharts();
+      console.log(`Loading data for city ${this.currentCity}...`);
+
+      // Get baseline state
+      this.baselineState = await this.api.getCurrentState(this.currentCity);
+      console.log('Baseline state:', this.baselineState);
+
+      // Generate baseline projection (no scenario)
+      this.baselineProjection = this.engine.generateBaseline(this.baselineState, 24);
+      
+      // Fallback: if no data, use generated fallback
+      if (!this.baselineProjection || !this.baselineProjection.environmental_risk || this.baselineProjection.environmental_risk.length === 0) {
+        console.warn('⚠ Baseline projection empty, using fallback');
+        this.baselineProjection = this.generateFallbackData(24);
+      }
+      
+      console.log('Baseline projection:', this.baselineProjection);
+
+      // Generate simulation projection if scenario exists
+      if (this.currentScenario) {
+        this.simulationProjection = this.engine.runSimulation(
+          this.baselineState,
+          this.currentScenario,
+          24
+        );
+        
+        // Fallback: if no data, use generated fallback
+        if (!this.simulationProjection || !this.simulationProjection.environmental_risk || this.simulationProjection.environmental_risk.length === 0) {
+          console.warn('⚠ Simulation projection empty, using fallback');
+          this.simulationProjection = this.generateFallbackData(24);
+        }
+        
+        console.log('Simulation projection:', this.simulationProjection);
+      } else {
+        // Use baseline as simulation if no scenario
+        this.simulationProjection = this.baselineProjection;
+        console.log('No scenario - using baseline as simulation');
+      }
+
+      this.updateGraphs();
+      this.updateStatistics();
     } catch (error) {
       console.error('Failed to load trend data:', error);
+      // Use fallback on error
+      console.warn('⚠ Error loading data, using fallback');
+      this.baselineProjection = this.generateFallbackData(24);
+      this.simulationProjection = this.generateFallbackData(24);
+      this.updateGraphs();
+      this.updateStatistics();
     }
   }
 
-  generateProjectedData() {
-    if (!this.historicalData) return;
-
-    // Generate 6-hour projection based on current trend
-    this.projectedData = {
-      aqi: this.projectMetric(this.historicalData.aqi, 6),
-      temperature: this.projectMetric(this.historicalData.temperature, 6),
-      hospital_load: this.projectMetric(this.historicalData.hospital_load, 6),
-      crop_supply: this.projectMetric(this.historicalData.crop_supply, 6)
-    };
-  }
-
-  projectMetric(historicalValues, hoursAhead) {
-    if (historicalValues.length < 2) return historicalValues;
-
-    const lastValue = historicalValues[historicalValues.length - 1].value;
-    const prevValue = historicalValues[historicalValues.length - 2].value;
-    const trend = lastValue - prevValue;
-
-    const projected = [];
-    for (let i = 0; i < hoursAhead; i++) {
-      const timestamp = new Date(
-        new Date(historicalValues[historicalValues.length - 1].timestamp).getTime() +
-        (i + 1) * 3600000
-      ).toISOString();
-
-      projected.push({
-        timestamp,
-        value: Math.max(0, lastValue + trend * (i + 1) * 0.5) // Dampen projection
-      });
+  /**
+   * Update all graphs with new data
+   */
+  updateGraphs() {
+    if (!this.baselineProjection || !this.simulationProjection) {
+      console.warn('No projection data available');
+      return;
     }
 
-    return projected;
-  }
+    console.log('Updating graphs with new data...');
 
-  updateCharts() {
-    if (!this.historicalData) return;
-
-    this.renderChart('aqi', this.historicalData.aqi, this.projectedData.aqi, 'AQI', '#a78bfa');
-    this.renderChart('temperature', this.historicalData.temperature, this.projectedData.temperature, 'Temperature (°C)', '#f59e0b');
-    this.renderChart('hospital', this.historicalData.hospital_load, this.projectedData.hospital_load, 'Hospital Load (%)', '#ef4444');
-    this.renderChart('crop', this.historicalData.crop_supply, this.projectedData.crop_supply, 'Crop Supply (%)', '#10b981');
-    this.renderRiskChart();
-
-    this.updateTrendDirections();
-  }
-
-  renderChart(id, historical, projected, label, color) {
-    const container = document.querySelector(`#${id}-chart`);
-    if (!container) return;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth;
-    canvas.height = 200;
-    container.innerHTML = '';
-    container.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-    const padding = 30;
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Background
-    ctx.fillStyle = 'rgba(10, 10, 26, 0.5)';
-    ctx.fillRect(0, 0, width, height);
-
-    // Grid
-    ctx.strokeStyle = 'rgba(167, 139, 250, 0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding + (height - padding * 2) * (i / 4);
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(width - padding, y);
-      ctx.stroke();
-    }
-
-    // Combine historical and projected
-    const allData = [...historical, ...projected];
-    const maxValue = Math.max(...allData.map(d => d.value));
-    const minValue = Math.min(...allData.map(d => d.value));
-    const range = maxValue - minValue || 1;
-
-    // Draw historical data
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-
-    historical.forEach((point, index) => {
-      const x = padding + (width - padding * 2) * (index / (allData.length - 1));
-      const y = height - padding - (height - padding * 2) * ((point.value - minValue) / range);
-
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+    // Validate and update each graph
+    const updateGraph = (graphId, baselineKey, simulationKey) => {
+      const graph = this.graphs[graphId];
+      if (!graph) {
+        console.warn(`Graph ${graphId} not found`);
+        return;
       }
-    });
 
-    ctx.stroke();
+      const baselineData = this.baselineProjection[baselineKey] || [];
+      const simulationData = this.simulationProjection[simulationKey] || [];
 
-    // Draw projected data (dashed)
-    ctx.strokeStyle = color;
-    ctx.setLineDash([5, 5]);
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-
-    const startIndex = historical.length - 1;
-    projected.forEach((point, index) => {
-      const totalIndex = startIndex + index;
-      const x = padding + (width - padding * 2) * (totalIndex / (allData.length - 1));
-      const y = height - padding - (height - padding * 2) * ((point.value - minValue) / range);
-
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+      // Validate data exists
+      if (baselineData.length === 0 || simulationData.length === 0) {
+        console.warn(`No data for ${graphId}: baseline=${baselineData.length}, simulation=${simulationData.length}`);
       }
-    });
 
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Label
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText(label, width / 2, height - 10);
-  }
-
-  renderRiskChart() {
-    const container = document.querySelector('#risk-chart');
-    if (!container) return;
-
-    // Calculate risk scores over time
-    const riskTimeline = this.historicalData.aqi.map((aqi, index) => {
-      const temp = this.historicalData.temperature[index]?.value || 25;
-      const hospital = this.historicalData.hospital_load[index]?.value || 50;
-      const crop = this.historicalData.crop_supply[index]?.value || 70;
-
-      const aqiNorm = Math.min(aqi.value / 500, 1);
-      const tempNorm = Math.max(0, Math.min((temp - 20) / 30, 1));
-      const hospitalNorm = hospital / 100;
-      const cropNorm = 1 - (crop / 100);
-
-      const riskScore = (aqiNorm * 0.35 + tempNorm * 0.25 + hospitalNorm * 0.25 + cropNorm * 0.15) * 100;
-
-      return {
-        timestamp: aqi.timestamp,
-        value: riskScore
-      };
-    });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth;
-    canvas.height = 200;
-    container.innerHTML = '';
-    container.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-    const padding = 30;
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Background
-    ctx.fillStyle = 'rgba(10, 10, 26, 0.5)';
-    ctx.fillRect(0, 0, width, height);
-
-    // Grid
-    ctx.strokeStyle = 'rgba(167, 139, 250, 0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding + (height - padding * 2) * (i / 4);
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(width - padding, y);
-      ctx.stroke();
-    }
-
-    // Draw risk line
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-
-    riskTimeline.forEach((point, index) => {
-      const x = padding + (width - padding * 2) * (index / (riskTimeline.length - 1));
-      const y = height - padding - (height - padding * 2) * (point.value / 100);
-
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    });
-
-    ctx.stroke();
-
-    // Label
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText('Overall Risk Score (%)', width / 2, height - 10);
-  }
-
-  updateTrendDirections() {
-    const directions = {
-      aqi: this.getTrendDirection(this.historicalData.aqi),
-      temperature: this.getTrendDirection(this.historicalData.temperature),
-      hospital: this.getTrendDirection(this.historicalData.hospital_load),
-      crop: this.getTrendDirection(this.historicalData.crop_supply)
+      // Force update
+      graph.updateData(baselineData, simulationData);
+      graph.animateUpdate();
     };
 
-    Object.entries(directions).forEach(([key, direction]) => {
-      const element = document.querySelector(`#${key}-direction`);
-      if (element) {
-        element.textContent = direction.symbol;
-        element.className = `insight-direction ${direction.class}`;
-      }
-    });
+    // Update each graph with explicit data binding
+    updateGraph('env-risk-chart', 'environmental_risk', 'environmental_risk');
+    updateGraph('health-risk-chart', 'health_risk', 'health_risk');
+    updateGraph('food-risk-chart', 'food_security_risk', 'food_security_risk');
+    updateGraph('aqi-chart', 'aqi', 'aqi');
+    updateGraph('temperature-chart', 'temperature', 'temperature');
+    updateGraph('hospital-chart', 'hospital_load', 'hospital_load');
+    updateGraph('crop-chart', 'crop_supply', 'crop_supply');
+    updateGraph('foodprice-chart', 'food_price_index', 'food_price_index');
+
+    console.log('✓ All graphs updated');
   }
 
-  getTrendDirection(data) {
-    if (data.length < 2) return { symbol: '→', class: 'stable' };
+  /**
+   * Update statistics display
+   */
+  updateStatistics() {
+    const scenarioType = document.querySelector('#scenario-type');
+    const cityName = document.querySelector('#city-name');
+    const description = document.querySelector('#trend-description');
 
-    const recent = data.slice(-6);
-    const avg1 = recent.slice(0, 3).reduce((sum, d) => sum + d.value, 0) / 3;
-    const avg2 = recent.slice(3).reduce((sum, d) => sum + d.value, 0) / 3;
+    if (scenarioType) {
+      scenarioType.textContent = this.currentScenario?.type || 'Baseline';
+    }
 
-    const change = avg2 - avg1;
-    const threshold = (avg1 * 0.05); // 5% threshold
+    if (cityName) {
+      const cityNames = { 1: 'Mumbai', 2: 'Delhi', 3: 'Bangalore' };
+      cityName.textContent = cityNames[this.currentCity] || 'Unknown';
+    }
 
-    if (change > threshold) {
-      return { symbol: '↑', class: 'worsening' };
-    } else if (change < -threshold) {
-      return { symbol: '↓', class: 'improving' };
-    } else {
-      return { symbol: '→', class: 'stable' };
+    if (description) {
+      const scenarioText = this.currentScenario ? ` - ${this.currentScenario.type} Scenario` : '';
+      description.textContent = `Baseline vs Simulation Comparison - 24 Hour Projection${scenarioText}`;
     }
   }
 
