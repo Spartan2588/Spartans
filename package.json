@@ -1,0 +1,25 @@
+{
+  "name": "urban-risk-platform",
+  "version": "1.0.0",
+  "description": "Premium 3D urban risk intelligence platform",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server.js",
+    "client": "cd client && npx vite",
+    "build": "cd client && vite build",
+    "preview": "cd client && vite preview",
+    "test:realtime": "node setup-realtime.js",
+    "test:cascade": "node test-cascade-realtime.js",
+    "test:all": "npm run test:realtime && npm run test:cascade"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

@@ -1,0 +1,103 @@
+.impact {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.impact-hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.impact-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: slideInUp 1s ease-out;
+}
+
+.impact-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.impact-hero-content p {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.impact-section {
+  position: relative;
+  z-index: 3;
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 10, 26, 0.7) 0%, rgba(10, 10, 26, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(167, 139, 250, 0.1);
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.impact-card {
+  padding: 2.5rem;
+  text-align: center;
+  transition: all 0.4s ease;
+}
+
+.impact-card:hover {
+  transform: translateY(-8px);
+}
+
+.impact-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.impact-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.impact-card p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .impact-hero {
+    height: 50vh;
+  }
+
+  .impact-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .impact-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .impact-grid {
+    grid-template-columns: 1fr;
+  }
+}

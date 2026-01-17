@@ -1,0 +1,595 @@
+﻿{
+    "city":  "Mumbai",
+    "city_id":  1,
+    "timestamp":  "2026-01-17T18:36:35.060Z",
+    "simulation_duration_hours":  24,
+    "trigger":  {
+                    "domain":  "power",
+                    "severity":  0.8,
+                    "initial_impact":  [
+                                           "power_plants",
+                                           "substations",
+                                           "distribution_grid",
+                                           "transformers"
+                                       ]
+                },
+    "cascades":  [
+                     {
+                         "domain":  "healthcare",
+                         "impact_time_hours":  0.01346576600795868,
+                         "severity":  0.58,
+                         "cause":  "power",
+                         "dependency_strength":  0.85,
+                         "affected_infrastructure":  [
+                                                         "hospitals",
+                                                         "clinics",
+                                                         "emergency_rooms"
+                                                     ]
+                     },
+                     {
+                         "domain":  "transport",
+                         "impact_time_hours":  0.020058728324906627,
+                         "severity":  0.54,
+                         "cause":  "power",
+                         "dependency_strength":  0.8,
+                         "affected_infrastructure":  [
+                                                         "metro_systems",
+                                                         "bus_networks",
+                                                         "railways"
+                                                     ]
+                     },
+                     {
+                         "domain":  "communications",
+                         "impact_time_hours":  0.259738243222696,
+                         "severity":  0.65,
+                         "cause":  "power",
+                         "dependency_strength":  0.95,
+                         "affected_infrastructure":  [
+                                                         "cell_towers",
+                                                         "data_centers",
+                                                         "fiber_network"
+                                                     ]
+                     },
+                     {
+                         "domain":  "emergency",
+                         "impact_time_hours":  0.28618023750915955,
+                         "severity":  0.61,
+                         "cause":  "power",
+                         "dependency_strength":  0.9,
+                         "affected_infrastructure":  [
+                                                         "dispatch_centers",
+                                                         "fire_stations",
+                                                         "police_stations"
+                                                     ]
+                     },
+                     {
+                         "domain":  "water",
+                         "impact_time_hours":  0.3250910560196443,
+                         "severity":  0.61,
+                         "cause":  "power",
+                         "dependency_strength":  0.9,
+                         "affected_infrastructure":  [
+                                                         "pumping_stations",
+                                                         "treatment_plants",
+                                                         "distribution_network"
+                                                     ]
+                     },
+                     {
+                         "domain":  "traffic",
+                         "impact_time_hours":  0.3723699994987133,
+                         "severity":  0.58,
+                         "cause":  "power",
+                         "dependency_strength":  0.85,
+                         "affected_infrastructure":  [
+                                                         "traffic_lights",
+                                                         "signaling_systems",
+                                                         "smart_roads"
+                                                     ]
+                     },
+                     {
+                         "domain":  "financial",
+                         "impact_time_hours":  0.4680969051657816,
+                         "severity":  0.65,
+                         "cause":  "power",
+                         "dependency_strength":  0.95,
+                         "affected_infrastructure":  [
+                                                         "banks",
+                                                         "atm_network",
+                                                         "payment_systems"
+                                                     ]
+                     },
+                     {
+                         "domain":  "disaster_response",
+                         "impact_time_hours":  1.0169390168983765,
+                         "severity":  0.47,
+                         "cause":  "emergency",
+                         "dependency_strength":  1,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "economic",
+                         "impact_time_hours":  1.052715329774606,
+                         "severity":  0.33,
+                         "cause":  "traffic",
+                         "dependency_strength":  0.7,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "residential",
+                         "impact_time_hours":  1.0568345768755298,
+                         "severity":  0.52,
+                         "cause":  "water",
+                         "dependency_strength":  0.95,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "government",
+                         "impact_time_hours":  1.175239338947597,
+                         "severity":  0.43,
+                         "cause":  "communications",
+                         "dependency_strength":  0.8,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "food_supply",
+                         "impact_time_hours":  1.247115227443446,
+                         "severity":  0.33,
+                         "cause":  "water",
+                         "dependency_strength":  0.6,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "public_safety",
+                         "impact_time_hours":  1.4268672824355235,
+                         "severity":  0.44,
+                         "cause":  "emergency",
+                         "dependency_strength":  0.95,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     },
+                     {
+                         "domain":  "public_health",
+                         "impact_time_hours":  1.482916661860889,
+                         "severity":  0.45,
+                         "cause":  "healthcare",
+                         "dependency_strength":  0.95,
+                         "affected_infrastructure":  [
+
+                                                     ]
+                     }
+                 ],
+    "timeline":  [
+                     {
+                         "hour":  0,
+                         "affected_domains":  8,
+                         "total_severity":  5.02,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  1,
+                         "affected_domains":  15,
+                         "total_severity":  7.03,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  2,
+                         "affected_domains":  15,
+                         "total_severity":  7.73,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  3,
+                         "affected_domains":  15,
+                         "total_severity":  7.02,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  4,
+                         "affected_domains":  15,
+                         "total_severity":  6.96,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  5,
+                         "affected_domains":  15,
+                         "total_severity":  6.9,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  6,
+                         "affected_domains":  15,
+                         "total_severity":  6.84,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  7,
+                         "affected_domains":  15,
+                         "total_severity":  6.78,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  8,
+                         "affected_domains":  15,
+                         "total_severity":  6.72,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  9,
+                         "affected_domains":  15,
+                         "total_severity":  6.66,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  10,
+                         "affected_domains":  15,
+                         "total_severity":  6.6,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  11,
+                         "affected_domains":  15,
+                         "total_severity":  6.54,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  12,
+                         "affected_domains":  15,
+                         "total_severity":  6.45,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  13,
+                         "affected_domains":  15,
+                         "total_severity":  6.36,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  14,
+                         "affected_domains":  15,
+                         "total_severity":  6.23,
+                         "active_failures":  8,
+                         "domains":  [
+                                         "power",
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  15,
+                         "affected_domains":  15,
+                         "total_severity":  6.03,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  16,
+                         "affected_domains":  15,
+                         "total_severity":  5.85,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  17,
+                         "affected_domains":  15,
+                         "total_severity":  5.65,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  18,
+                         "affected_domains":  15,
+                         "total_severity":  5.42,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  19,
+                         "affected_domains":  15,
+                         "total_severity":  5.16,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  20,
+                         "affected_domains":  15,
+                         "total_severity":  4.87,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  21,
+                         "affected_domains":  15,
+                         "total_severity":  4.55,
+                         "active_failures":  7,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "communications",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  22,
+                         "affected_domains":  15,
+                         "total_severity":  4.2,
+                         "active_failures":  6,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  23,
+                         "affected_domains":  15,
+                         "total_severity":  3.92,
+                         "active_failures":  6,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport",
+                                         "financial"
+                                     ]
+                     },
+                     {
+                         "hour":  24,
+                         "affected_domains":  15,
+                         "total_severity":  3.75,
+                         "active_failures":  5,
+                         "domains":  [
+                                         "water",
+                                         "traffic",
+                                         "emergency",
+                                         "healthcare",
+                                         "transport"
+                                     ]
+                     }
+                 ],
+    "total_impact":  {
+                         "affected_domains":  14,
+                         "peak_severity_time_hours":  2,
+                         "peak_total_severity":  7.73,
+                         "population_affected":  null,
+                         "estimated_economic_cost":  null,
+                         "economic_cost_by_domain":  {
+                                                         "water":  29280000,
+                                                         "traffic":  20879999.999999996,
+                                                         "communications":  46800000,
+                                                         "emergency":  58560000,
+                                                         "healthcare":  83519999.99999999,
+                                                         "transport":  32400000,
+                                                         "financial":  124800000,
+                                                         "residential":  null,
+                                                         "food_supply":  null,
+                                                         "economic":  null,
+                                                         "government":  null,
+                                                         "public_safety":  null,
+                                                         "disaster_response":  null,
+                                                         "public_health":  null
+                                                     },
+                         "recovery_time_hours":  70,
+                         "cascade_depth":  14
+                     },
+    "recommendations":  [
+                            "Activate backup power systems for critical infrastructure",
+                            "Deploy mobile generators to hospitals and emergency services",
+                            "Implement rolling blackout schedule to preserve grid stability",
+                            "Declare state of emergency",
+                            "Activate all emergency response protocols",
+                            "Request state/federal assistance",
+                            "Establish alternative emergency dispatch centers",
+                            "Pre-position emergency response teams"
+                        ]
+}

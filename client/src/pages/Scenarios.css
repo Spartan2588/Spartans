@@ -1,0 +1,260 @@
+.scenarios {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.scenarios-hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scenarios-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.scenarios-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scenarios-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.scenarios-hero-content p {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.scenarios-section {
+  position: relative;
+  z-index: 3;
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 14, 39, 0.8) 0%, rgba(10, 14, 39, 0.95) 100%);
+  border-top: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+.scenarios-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.section-header p {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-weight: 300;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.scenario-card {
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: center;
+}
+
+.scenario-card:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 41, 59, 0.4) 100%);
+  transform: translateY(-8px);
+}
+
+.scenario-card.active {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(30, 41, 59, 0.5) 100%);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.scenario-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.scenario-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.scenario-card p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.scenario-detail {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 1rem;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.detail-content p {
+  font-size: 1rem;
+  color: #cbd5e1;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.simulation-section {
+  position: relative;
+  z-index: 3;
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-top: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+.simulation-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.simulation-container h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.simulation-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.step {
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.step-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+
+.step h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.step p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .scenarios-hero {
+    height: 50vh;
+  }
+
+  .scenarios-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .scenarios-section,
+  .simulation-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .section-header h2,
+  .simulation-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .scenarios-grid {
+    grid-template-columns: 1fr;
+  }
+}
