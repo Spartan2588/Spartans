@@ -1,0 +1,77 @@
+.trends-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.trends-hero {
+  position: relative;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.1) 0%, rgba(10, 10, 26, 0.8) 100%);
+}
+
+.trends-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trends-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.trends-hero-content p {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.trends-section {
+  position: relative;
+  z-index: 3;
+  padding: 4rem 2rem;
+  background: linear-gradient(180deg, rgba(10, 14, 39, 0.8) 0%, rgba(10, 14, 39, 0.95) 100%);
+  border-top: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+@media (max-width: 768px) {
+  .trends-page {
+    padding-top: 60px;
+  }
+
+  .trends-hero {
+    height: 30vh;
+  }
+
+  .trends-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .trends-hero-content p {
+    font-size: 1rem;
+  }
+
+  .trends-section {
+    padding: 2rem 1.5rem;
+  }
+}

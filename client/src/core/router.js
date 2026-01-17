@@ -5,6 +5,9 @@ import { PlatformPage } from '../pages/Platform.js';
 import { ScenariosPage } from '../pages/Scenarios.js';
 import { ImpactPage } from '../pages/Impact.js';
 import { AboutPage } from '../pages/About.js';
+import { TrendsPage } from '../pages/Trends.js';
+import { MapPage } from '../pages/Map.js';
+import { CascadePage } from '../pages/Cascade.js';
 
 export class Router {
   constructor() {
@@ -14,7 +17,10 @@ export class Router {
       '/platform': PlatformPage,
       '/scenarios': ScenariosPage,
       '/impact': ImpactPage,
-      '/about': AboutPage
+      '/about': AboutPage,
+      '/trends': TrendsPage,
+      '/map': MapPage,
+      '/cascade': CascadePage
     };
   }
 
