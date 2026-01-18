@@ -116,7 +116,7 @@ export class ScenarioSliders {
           ${this.renderSlider('aqi', 'AQI', 0, 500, 1, '', 'Air Quality Index')}
           ${this.renderSlider('temperature', 'Temperature', -10, 55, 0.5, '°C', 'Ambient Temperature')}
           ${this.renderSlider('hospital_load', 'Hospital Load', 0, 100, 1, '%', 'Healthcare System Load')}
-          ${this.renderSlider('crop_supply', 'Crop Supply', 0, 100, 1, '%', 'Agricultural Supply Index')}
+          ${this.renderSlider('crop_supply', 'Food Availability', 0, 100, 1, '%', 'Urban Food Availability Index')}
         </div>
 
         <button class="simulate-btn" id="run-simulation">

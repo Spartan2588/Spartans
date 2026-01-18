@@ -39,34 +39,9 @@ export class DataDashboard {
             <div id="metrics-panel" class="metrics-panel"></div>
           </div>
 
-          <!-- Scenario Comparison -->
-          <div class="dashboard-section full-width">
-            <h3>Scenario Simulation</h3>
-            <div class="scenario-controls">
-              <div class="slider-group">
-                <label>AQI: <span id="aqi-value">150</span></label>
-                <input type="range" id="aqi-slider" min="0" max="500" value="150" class="slider">
-              </div>
-              <div class="slider-group">
-                <label>Hospital Load: <span id="hospital-value">50</span>%</label>
-                <input type="range" id="hospital-slider" min="0" max="100" value="50" class="slider">
-              </div>
-              <div class="slider-group">
-                <label>Crop Supply: <span id="crop-value">70</span>%</label>
-                <input type="range" id="crop-slider" min="0" max="100" value="70" class="slider">
-              </div>
-              <div class="slider-group">
-                <label>Temperature: <span id="temp-value">25</span>°C</label>
-                <input type="range" id="temp-slider" min="20" max="50" step="0.1" value="25" class="slider">
-              </div>
-              <button id="simulate-btn" class="btn btn-primary">Simulate Scenario</button>
-            </div>
-            <div id="comparison-results" class="comparison-results"></div>
-          </div>
-
           <!-- Economic Impact -->
-          <div class="dashboard-section">
-            <h3>Economic Impact</h3>
+          <div class="dashboard-section section-economic">
+            <h3>Economic Exposure (Real-Time)</h3>
             <div id="economic-impact" class="economic-impact"></div>
           </div>
 
@@ -99,17 +74,6 @@ export class DataDashboard {
       this.loadData();
       gsap.to(refreshBtn, { rotation: 360, duration: 0.6, ease: 'power2.inOut' });
     });
-
-    sliders.forEach(slider => {
-      slider.addEventListener('input', (e) => {
-        const valueSpan = container.querySelector(`#${e.target.id.replace('-slider', '-value')}`);
-        if (valueSpan) {
-          valueSpan.textContent = e.target.value;
-        }
-      });
-    });
-
-    simulateBtn.addEventListener('click', () => this.runSimulation(container));
   }
 
   async loadData() {
@@ -196,7 +160,7 @@ export class DataDashboard {
       { label: 'AQI', value: format(this.currentState.aqi, 0), unit: '', icon: '💨' },
       { label: 'Hospital Load', value: format(this.currentState.bed_occupancy_percent, 1), unit: '%', icon: '🏥' },
       { label: 'Temperature', value: format(this.currentState.temperature, 1), unit: '°C', icon: '🌡️' },
-      { label: 'Crop Supply', value: format(this.currentState.crop_supply_index, 0), unit: '%', icon: '🌾' },
+      { label: 'Food Availability', value: format(this.currentState.crop_supply_index, 0), unit: '%', icon: '🌾' },
       { label: 'Food Price', value: format(this.currentState.food_price_index, 0), unit: '', icon: '💹' },
       { label: 'Traffic', value: format(this.currentState.traffic_congestion_index, 0), unit: '', icon: '🚗' }
     ];
@@ -210,93 +174,7 @@ export class DataDashboard {
     `).join('');
   }
 
-  async runSimulation(container) {
-    const aqi = parseFloat(container.querySelector('#aqi-slider').value);
-    const hospital_load = parseFloat(container.querySelector('#hospital-slider').value);
-    const crop_supply = parseFloat(container.querySelector('#crop-slider').value);
-    const temperature = parseFloat(container.querySelector('#temp-slider').value);
-
-    try {
-      const result = await this.api.simulateScenario({
-        city_id: this.currentCity,
-        modifications: {
-          aqi,
-          hospital_load: hospital_load / 100, // Normalized 0-1 for backend
-          crop_supply_index: crop_supply,     // Renaming to match schema if needed
-          temperature,
-          respiratory_cases: null // Optional
-        }
-      });
-
-      this.renderComparison(result);
-      this.renderEconomicImpact(result.economic_impact);
-
-      // Update city environment
-      if (window.cityEnvironment) {
-        window.dispatchEvent(new CustomEvent('scenario-updated', {
-          detail: result
-        }));
-      }
-    } catch (error) {
-      console.error('Simulation failed:', error);
-    }
-  }
-
-  renderComparison(result) {
-    const container = document.querySelector('#comparison-results');
-    if (!container) return;
-
-    // Backend returns baseline_risks and intervention_risks (not baseline/intervention)
-    const baselineRisks = result.baseline_risks || result.baseline || {};
-    const interventionRisks = result.intervention_risks || result.intervention || {};
-
-    const risks = [
-      { key: 'environmental_risk', probKey: 'environmental_prob', label: 'Environmental' },
-      { key: 'health_risk', probKey: 'health_prob', label: 'Health' },
-      { key: 'food_security_risk', probKey: 'food_security_prob', label: 'Food Security' }
-    ];
-
-    container.innerHTML = `
-      <div class="comparison-grid">
-        ${risks.map(risk => {
-      // Backend returns risk level as string, probability as separate field
-      const baselineLevel = baselineRisks[risk.key] || 'unknown';
-      const baselineProb = Math.round((baselineRisks[risk.probKey] || 0) * 100);
-      const interventionLevel = interventionRisks[risk.key] || 'unknown';
-      const interventionProb = Math.round((interventionRisks[risk.probKey] || 0) * 100);
-      const change = interventionProb - baselineProb;
-
-      return `
-            <div class="comparison-item glass">
-              <h4>${risk.label}</h4>
-              <div class="comparison-row">
-                <div class="comparison-col">
-                  <span class="label">Baseline</span>
-                  <span class="level" style="color: ${this.getRiskColor(baselineLevel)}">
-                    ${baselineLevel.toUpperCase()}
-                  </span>
-                  <span class="prob">${baselineProb}%</span>
-                </div>
-                <div class="comparison-col">
-                  <span class="label">Intervention</span>
-                  <span class="level" style="color: ${this.getRiskColor(interventionLevel)}">
-                    ${interventionLevel.toUpperCase()}
-                  </span>
-                  <span class="prob">${interventionProb}%</span>
-                </div>
-                <div class="comparison-col">
-                  <span class="label">Change</span>
-                  <span class="change ${change < 0 ? 'positive' : 'negative'}">
-                    ${change > 0 ? '+' : ''}${change}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          `;
-    }).join('')}
-      </div>
-    `;
-  }
+  // Simulation methods removed - handled in Scenarios section
 
   renderEconomicImpact(impact) {
     const container = document.querySelector('#economic-impact');

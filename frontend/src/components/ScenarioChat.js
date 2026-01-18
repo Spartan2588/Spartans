@@ -208,7 +208,7 @@ export class ScenarioChat {
             <span class="metric-value">${(data.hospital_load || data.bed_occupancy_percent)?.toFixed(0) || 'N/A'}%</span>
           </div>
           <div class="metric-item">
-            <span class="metric-label">Crop Supply</span>
+            <span class="metric-label">Food Availability</span>
             <span class="metric-value">${data.crop_supply_index?.toFixed(0) || 'N/A'}%</span>
           </div>
         </div>

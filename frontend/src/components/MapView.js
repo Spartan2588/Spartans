@@ -74,7 +74,7 @@ export class MapView {
       const newRect = this.canvas.parentElement.getBoundingClientRect();
       this.canvas.width = newRect.width;
       this.canvas.height = newRect.height;
-      this.render();
+      this.draw();
     });
   }
 
@@ -84,7 +84,7 @@ export class MapView {
 
     layerSelect.addEventListener('change', (e) => {
       this.selectedLayer = e.target.value;
-      this.render();
+      this.draw();
     });
 
     refreshBtn.addEventListener('click', () => {
@@ -115,13 +115,13 @@ export class MapView {
       this.currentRisks = risks;
 
       this.updateCityInfo();
-      this.render();
+      this.draw();
     } catch (error) {
       console.error('Failed to load map data:', error);
     }
   }
 
-  render() {
+  draw() {
     if (!this.ctx) return;
 
     const width = this.canvas.width;
@@ -435,7 +435,7 @@ export class MapView {
   syncWithScenario(scenario) {
     if (scenario.intervention) {
       this.currentRisks = scenario.intervention;
-      this.render();
+      this.draw();
     }
   }
 

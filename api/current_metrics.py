@@ -123,17 +123,16 @@ def fetch_current_metrics(db: Session, city: str = "Mumbai", state: str = "Mahar
          if val <= 1.0 and val > 0:
              val = val * 100.0
          
+         ts_health = db_data.get("timestamp")
+         freshness_health = calculate_data_freshness(ts_health)
+         
          # Enforce realistic floor: Hospital Load rarely below 40% in metro cities
          if val < 40.0:
              val = max(val, 55.0) # Boost to realistic average if data is garbage low
              freshness_health = "estimated" # Mark as estimated since we altered it
              
          metrics["hospital_load"] = val
-             
-         ts_health = db_data.get("timestamp")
          timestamps["respiratory"] = format_timestamp_ago(ts_health)
-         if freshness_health != "estimated":
-             freshness_health = calculate_data_freshness(ts_health)
     else:
         metrics["hospital_load"] = defaults["hospital_load"]
         timestamps["respiratory"] = "Estimated"

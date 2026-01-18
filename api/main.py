@@ -322,30 +322,25 @@ async def simulate_scenario_delta(
     Deltas are NEVER hardcoded - they are always applied relative to real data.
     """
     from .current_metrics import fetch_current_metrics
-    from .scenario_deltas import run_delta_simulation, ScenarioDeltas
+    from .scenario_interpreter import run_simulation_pipeline
     
     try:
         city = request.city.lower()
         
         # Step 1: Fetch current metrics (baseline)
-        print(f"[VALIDATION] Fetching current metrics for {city}")
         baseline_metrics = fetch_current_metrics(db, city)
         
         used_live_data = baseline_metrics.get('data_freshness') in ['live', 'recent']
         fallback_used = baseline_metrics.get('data_freshness') in ['cached', 'estimated']
         
-        print(f"[VALIDATION] Using live data: {used_live_data}")
-        print(f"[VALIDATION] Fallback used: {fallback_used}")
-        
-        # Step 2: Run delta simulation
-        simulation_result = run_delta_simulation(
-            baseline_metrics=baseline_metrics,
+        # Step 2: Run interpreted simulation (Semantic -> Signals -> Impact)
+        simulation_result = run_simulation_pipeline(
+            baseline=baseline_metrics,
             scenario_type=request.scenario_type,
-            custom_prompt=request.custom_prompt,
-            custom_deltas=request.custom_deltas
+            custom_prompt=request.custom_prompt
         )
         
-        print(f"[VALIDATION] Deltas applied: {simulation_result['deltas']}")
+        print(f"[SCENARIO] Interpreted: {simulation_result['deltas'].get('description')}")
         
         # Step 3: Prepare simulated state for ML inference
         simulated_state = {

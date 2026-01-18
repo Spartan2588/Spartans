@@ -51,7 +51,7 @@ export class ScenarioResults {
             ${this.renderMetric('AQI', safeBaseline.aqi, null, baseline.timestamps?.air_quality, baseline.sources?.air_quality)}
             ${this.renderMetric('Temperature', safeBaseline.temperature, '°C', baseline.timestamps?.traffic, baseline.sources?.traffic)}
             ${this.renderMetric('Hospital Load', safeBaseline.hospital_load, '%', baseline.timestamps?.respiratory, baseline.sources?.respiratory)}
-            ${this.renderMetric('Crop Supply', safeBaseline.crop_supply, '%', baseline.timestamps?.agriculture, baseline.sources?.agriculture)}
+            ${this.renderMetric('Food Availability', safeBaseline.crop_supply, '%', baseline.timestamps?.agriculture, baseline.sources?.agriculture)}
           </div>
           <div class="confidence-bar">
             <span class="confidence-label">Data Confidence:</span>
@@ -74,7 +74,7 @@ export class ScenarioResults {
             ${this.renderDeltaMetric('AQI', safeBaseline.aqi, safeSimulated.aqi, deltas.aqi_delta)}
             ${this.renderDeltaMetric('Temperature', safeBaseline.temperature, safeSimulated.temperature, deltas.temperature_delta, '°C')}
             ${this.renderDeltaMetric('Hospital Load', safeBaseline.hospital_load, safeSimulated.hospital_load, deltas.hospital_load_delta, '%')}
-            ${this.renderDeltaMetric('Crop Supply', safeBaseline.crop_supply, safeSimulated.crop_supply, deltas.crop_supply_delta, '%')}
+            ${this.renderDeltaMetric('Food Availability', safeBaseline.crop_supply, safeSimulated.crop_supply, deltas.crop_supply_delta, '%')}
           </div>
         </div>
 
