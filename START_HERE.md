@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 🚀 How to Start the Project
 
 ## Quick Start
@@ -50,6 +51,8 @@ I've created helper scripts for you:
 # Start both
 .\start-all.ps1
 =======
+=======
+>>>>>>> origin/main
 # 🚀 START HERE - Real-Time AQI Integration Complete
 
 ## ✅ Your API Key is Configured and Ready!
@@ -134,11 +137,15 @@ Variable:     OPENWEATHERMAP_API_KEY
 Free Tier:    60 calls/minute
 Monthly:      1,000 calls/day
 Status:       ✅ Active
+<<<<<<< HEAD
 >>>>>>> 1bbaf8951717e2546b08cc235e3a7f6d42730913
+=======
+>>>>>>> origin/main
 ```
 
 ---
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ## 📋 Prerequisites Check
 
@@ -229,6 +236,8 @@ curl http://localhost:5000/api/v1/current-state?city_id=1
 # Test cascade endpoint
 curl "http://localhost:5000/api/v1/cascading-failure?city_id=1&trigger=power&severity=0.8"
 =======
+=======
+>>>>>>> origin/main
 ## 🚨 If Something Goes Wrong
 
 ### Backend won't start
@@ -250,11 +259,15 @@ curl "http://localhost:5000/api/v1/cascading-failure?city_id=1&trigger=power&sev
 # Check if port 5173 is available
 # Run: npm install (in client/)
 # Check backend is running
+<<<<<<< HEAD
 >>>>>>> 1bbaf8951717e2546b08cc235e3a7f6d42730913
+=======
+>>>>>>> origin/main
 ```
 
 ---
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ## ⚠️ Still Having Issues?
 
@@ -282,6 +295,8 @@ npm run server    # Backend only
 npm run client    # Frontend only
 ```
 =======
+=======
+>>>>>>> origin/main
 ## 📞 Quick Links
 
 ### API Documentation
@@ -343,4 +358,7 @@ Choose your path:
 **Recommended:** 
 - **Windows users:** Start with **WINDOWS_SETUP.md**!
 - **Others:** Start with **QUICK_COMMANDS.md**!
+<<<<<<< HEAD
 >>>>>>> 1bbaf8951717e2546b08cc235e3a7f6d42730913
+=======
+>>>>>>> origin/main
