@@ -1,9 +1,103 @@
 .scenario-chat {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 0;
 }
 
+/* Current Metrics Display */
+.current-metrics-display {
+  margin-bottom: 2rem;
+}
+
+.current-metrics-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 30, 60, 0.4) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.metrics-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metrics-icon {
+  font-size: 1.25rem;
+}
+
+.metrics-header h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.freshness-badge {
+  padding: 0.2rem 0.6rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #10b981;
+  text-transform: uppercase;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.metric-item {
+  text-align: center;
+}
+
+.metric-item .metric-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.metric-item .metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.metrics-loading,
+.metrics-error {
+  padding: 1.5rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.metrics-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.error-icon {
+  font-size: 1.25rem;
+}
+
+/* Chat Input Wrapper */
 .chat-input-wrapper {
   background: linear-gradient(135deg, rgba(30, 30, 60, 0.4) 0%, rgba(15, 15, 35, 0.4) 100%);
   border: 1px solid rgba(167, 139, 250, 0.2);
@@ -11,6 +105,7 @@
   padding: 1.5rem;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
 }
 
 .chat-form {
@@ -21,14 +116,21 @@
 
 .chat-input {
   flex: 1;
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
   color: #e2e8f0;
   font-size: 1rem;
   padding: 0.75rem 1rem;
   outline: none;
   font-family: 'Inter', sans-serif;
-  font-weight: 300;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  border-color: rgba(167, 139, 250, 0.4);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .chat-input::placeholder {
@@ -54,6 +156,12 @@
 .chat-submit:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(167, 139, 250, 0.3);
+}
+
+.chat-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .submit-icon {
@@ -86,6 +194,71 @@
   transform: translateY(-2px);
 }
 
+/* Sliders Container */
+.sliders-container {
+  margin-bottom: 1.5rem;
+}
+
+/* Results Container */
+.results-container {
+  min-height: 100px;
+}
+
+/* Loading States */
+.simulation-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+  color: #94a3b8;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(167, 139, 250, 0.2);
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.simulation-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: #f87171;
+}
+
+.retry-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  color: #f87171;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .scenario-chat {
     padding: 1rem 0;
@@ -111,5 +284,10 @@
   .suggestion-btn {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 }

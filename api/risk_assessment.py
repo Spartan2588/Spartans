@@ -190,13 +190,28 @@ def assess_food_security_risk(price_volatility: float, supply_index: Optional[fl
     }
 
 
-def calculate_resilience_score(env_risk: float, health_risk: float, food_risk: float) -> float:
+def calculate_resilience_score(env_prob: float, health_prob: float, food_prob: float, confidence: float = 0.5) -> float:
     """
-    Calculate overall resilience score (inverse of average risk).
-    Higher score = more resilient.
+    Calculate overall resilience score with weighted risk components and uncertainty penalty.
+    Formula: 1.0 - (w_env*P_env + w_health*P_health + w_food*P_food + w_unc*(1-confidence))
     """
-    avg_risk = (env_risk + health_risk + food_risk) / 3.0
-    resilience = 1.0 - avg_risk
+    # Weights for risk components
+    w_env = 0.35
+    w_health = 0.45
+    w_food = 0.20
+    
+    # Weight for uncertainty penalty
+    w_uncertainty = 0.10
+
+    # Calculate weighted risk
+    risk_component = (w_env * env_prob) + (w_health * health_prob) + (w_food * food_prob)
+    
+    # Calculate uncertainty penalty (lower confidence = higher penalty)
+    uncertainty_penalty = w_uncertainty * (1.0 - confidence)
+    
+    # Resilience is inverse of total negative factors
+    resilience = 1.0 - (risk_component + uncertainty_penalty)
+    
     return max(0.0, min(1.0, resilience))  # Clamp to [0, 1]
 
 
@@ -215,6 +230,9 @@ def compute_risk_assessment(current_state: Dict) -> Dict:
     hospital_load = current_state.get('hospital_load')
     respiratory_cases = current_state.get('respiratory_cases')
     price_volatility = current_state.get('avg_food_price_volatility')
+    
+    # Extract confidence (default to 0.5 if missing)
+    confidence = current_state.get('confidence', 0.5)
 
     # Assess each risk category
     env_assessment = assess_environmental_risk(
@@ -226,13 +244,14 @@ def compute_risk_assessment(current_state: Dict) -> Dict:
         aqi_severity or 0, respiratory_cases or 0
     )
 
-    food_assessment = assess_food_security_risk(price_volatility or 0)
+    food_assessment = assess_food_security_risk(price_volatility or 0, current_state.get('crop_supply'))
 
-    # Calculate resilience
+    # Calculate resilience with confidence
     resilience = calculate_resilience_score(
         env_assessment['probability'],
         health_assessment['probability'],
-        food_assessment['probability']
+        food_assessment['probability'],
+        confidence
     )
 
     # Combine all explanations
@@ -241,6 +260,18 @@ def compute_risk_assessment(current_state: Dict) -> Dict:
         health_assessment['explanations'] +
         food_assessment['explanations']
     )
+    
+    # Add resilience explanation
+    resilience_exp = []
+    if resilience < 0.4:
+        resilience_exp.append("Critical resilience - immediate intervention needed")
+    elif resilience < 0.6:
+        resilience_exp.append("Moderate resilience - monitoring required")
+        
+    if confidence < 0.5:
+        resilience_exp.append("Score precision reduced by low data confidence")
+        
+    final_explanations = resilience_exp + all_explanations
 
     return {
         'environmental_risk': env_assessment['risk_level'],
@@ -250,7 +281,7 @@ def compute_risk_assessment(current_state: Dict) -> Dict:
         'food_security_risk': food_assessment['risk_level'],
         'food_security_prob': food_assessment['probability'],
         'resilience_score': resilience,
-        'causal_explanations': all_explanations[:5],  # Limit to top 5
-        'city': current_state.get('city', 'unknown'),
+        'causal_explanations': final_explanations[:5],  # Limit to top 5
+        'city': current_state.get('city', 'Mumbai'),
         'timestamp': current_state.get('timestamp')
     }

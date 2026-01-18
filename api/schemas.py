@@ -3,7 +3,7 @@ Pydantic schemas for request/response validation.
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal
 from datetime import date, datetime
 
 
@@ -31,7 +31,14 @@ class CurrentStateResponse(BaseModel):
     temperature: Optional[float] = None        # NEW
     humidity: Optional[float] = None           # NEW
     wind_speed: Optional[float] = None         # NEW
-    data_freshness: Dict[str, Any]  # Can be date, datetime, or string
+    
+    # Robust metrics additions
+    confidence: Optional[float] = 0.5
+    sources: Optional[Dict[str, str]] = None
+    timestamps: Optional[Dict[str, str]] = None  # Detailed formatted timestamps
+    
+    # Relax data_freshness to allow string (overall status) or dict (per-domain)
+    data_freshness: Any 
     
     class Config:
         from_attributes = True
@@ -116,6 +123,83 @@ class CitiesResponse(BaseModel):
     """List of cities with summaries."""
     cities: List[CitySummary]
     total_cities: int
+
+
+# Delta-Based Scenario Schemas
+class DeltaScenarioRequest(BaseModel):
+    """Request for delta-based scenario simulation."""
+    city: str = Field(..., description="City name (e.g., 'delhi', 'mumbai')")
+    scenario_type: Optional[str] = Field(None, description="Preset scenario: heatwave, drought, crisis, flood, pollution_spike")
+    custom_prompt: Optional[str] = Field(None, description="Natural language prompt for scenario inference")
+    custom_deltas: Optional[Dict[str, float]] = Field(None, description="Manual delta overrides: aqi_delta, temperature_delta, etc.")
+
+
+class BaselineMetrics(BaseModel):
+    """Current/baseline metrics before scenario application."""
+    aqi: Optional[float] = None
+    temperature: Optional[float] = None
+    hospital_load: Optional[float] = None
+    crop_supply: Optional[float] = None
+    timestamps: Dict[str, str] = Field(default_factory=dict)
+    data_freshness: str = "unknown"
+    confidence: float = 0.5
+    sources: Dict[str, str] = Field(default_factory=dict)
+
+
+
+class ScenarioSignals(BaseModel):
+    """Structured scenario signals extracted from prompt."""
+    primary_events: List[Literal["flood", "heatwave", "drought", "pollution", "cyclone", "none"]]
+    duration: Literal["short", "moderate", "prolonged"]
+    severity: Literal["low", "moderate", "high"]
+    secondary_impacts: List[Literal[
+        "transport_disruption", "hospital_access_reduction", "power_outage", 
+        "water_shortage", "food_supply_disruption", "none"
+    ]]
+    confidence: Literal["high", "medium", "low"]
+
+
+class DeltaInfo(BaseModel):
+    """Information about deltas applied in scenario."""
+    aqi_delta: float = 0
+    temperature_delta: float = 0
+    hospital_load_delta: float = 0
+    crop_supply_delta: float = 0
+    source: str = "default"
+    inferred_scenario: Optional[str] = None
+    signals: Optional[ScenarioSignals] = None  # NEW: Structured signals
+    inference_confidence: Optional[float] = None
+    description: str = ""
+
+
+class SimulatedMetrics(BaseModel):
+    """Metrics after scenario deltas are applied."""
+    aqi: float
+    temperature: float
+    hospital_load: float
+    crop_supply: float
+    deltas_applied: Dict[str, Dict[str, float]] = Field(
+        default_factory=dict,
+        description="Per-metric breakdown: {metric: {baseline, delta, final}}"
+    )
+
+
+class ValidationInfo(BaseModel):
+    """Validation information for debugging."""
+    used_live_data: bool = False
+    fallback_used: bool = False
+    deltas_applied: bool = False
+    ml_executed: bool = False
+
+
+class DeltaScenarioResponse(BaseModel):
+    """Response from delta-based scenario simulation."""
+    baseline: BaselineMetrics
+    deltas: DeltaInfo
+    simulated: SimulatedMetrics
+    risks: RiskAssessmentResponse
+    validation: ValidationInfo
+    timestamp: str
 
 
 # Health Check Schema

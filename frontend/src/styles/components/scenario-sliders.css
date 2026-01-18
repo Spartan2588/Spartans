@@ -1,0 +1,224 @@
+.scenario-sliders {
+    background: linear-gradient(135deg, rgba(30, 30, 60, 0.3) 0%, rgba(15, 15, 35, 0.3) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.15);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+/* Header */
+.sliders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sliders-header h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 0;
+}
+
+.reset-btn {
+    padding: 0.4rem 0.8rem;
+    background: rgba(107, 114, 128, 0.2);
+    border: 1px solid rgba(107, 114, 128, 0.3);
+    border-radius: 0.5rem;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+    background: rgba(107, 114, 128, 0.3);
+    color: #e2e8f0;
+}
+
+/* Sliders Grid */
+.sliders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Slider Item */
+.slider-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.slider-item:hover {
+    border-color: rgba(167, 139, 250, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Slider Header */
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.slider-header label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #94a3b8;
+    cursor: help;
+}
+
+.slider-values {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.slider-delta {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+.delta-up {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.delta-down {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.delta-neutral {
+    background: rgba(107, 114, 128, 0.15);
+    color: #9ca3af;
+}
+
+.slider-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Slider Track */
+.slider-track-wrapper {
+    position: relative;
+}
+
+.slider-input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    border-radius: 50%;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(167, 139, 250, 0.4);
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.5);
+}
+
+.slider-input::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+.slider-input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    border-radius: 50%;
+    border: none;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(167, 139, 250, 0.4);
+}
+
+/* Slider Marks */
+.slider-marks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+}
+
+.slider-marks .mark {
+    font-size: 0.65rem;
+    color: #64748b;
+}
+
+/* Simulate Button */
+.simulate-btn {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.simulate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(167, 139, 250, 0.4);
+}
+
+.simulate-btn:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .scenario-sliders {
+        padding: 1rem;
+    }
+
+    .sliders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sliders-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}

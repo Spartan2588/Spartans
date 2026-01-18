@@ -97,6 +97,15 @@ class RiskEngine:
             Prediction with class, probabilities, confidence
         """
         X = np.array([[aqi, traffic_density, temperature, rainfall]])
+        
+        # Threshold Override: Force high risk for extreme API values (ML extrapolation fix)
+        if aqi > 300:
+             return {
+                 'risk_class': 'high',
+                 'probabilities': {'low': 0.02, 'medium': 0.08, 'high': 0.90},
+                 'confidence': 0.99
+             }
+             
         result = self.env_model.predict_with_proba(X)
         
         # Convert to single-sample format
@@ -170,6 +179,15 @@ class RiskEngine:
         X = np.array([[
             crop_supply_index, food_price_index, rainfall, temperature, supply_disruption_events
         ]])
+        
+        # Threshold Override: Force high risk for starvation levels
+        if crop_supply_index < 30:
+             return {
+                 'risk_class': 'high',
+                 'probabilities': {'low': 0.01, 'medium': 0.04, 'high': 0.95},
+                 'confidence': 0.99
+             }
+             
         result = self.food_model.predict_with_proba(X)
         
         return {
