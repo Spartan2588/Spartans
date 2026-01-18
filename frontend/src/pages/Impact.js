@@ -1,10 +1,13 @@
+import React, { useEffect, useRef } from 'react';
 import '../styles/pages/impact.css';
 
-export class ImpactPage {
-  constructor() {
-  }
+const Impact = () => {
+  const containerRef = useRef(null);
 
-  render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="impact">
         <div class="impact-hero">
@@ -41,9 +44,9 @@ export class ImpactPage {
         </section>
       </div>
     `;
-  }
+  }, []);
 
-  cleanup() {
-    // City persists across pages
-  }
-}
+  return <div ref={containerRef}></div>;
+};
+
+export default Impact;

@@ -1,34 +1,33 @@
+import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import '../styles/page-transition.css';
 
-export class PageTransition {
-  static element = null;
+const PageTransition = ({ children, isActive }) => {
+  const overlayRef = useRef(null);
 
-  static init(container) {
-    this.element = container;
-    this.element.innerHTML = '<div class="transition-overlay"></div>';
-  }
+  useEffect(() => {
+    if (isActive) {
+      gsap.to(overlayRef.current, {
+        opacity: 0.15,
+        duration: 0.3,
+        ease: 'power2.inOut'
+      });
+    } else {
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.inOut',
+        delay: 0.1
+      });
+    }
+  }, [isActive]);
 
-  static start() {
-    if (!this.element) return;
-    
-    const overlay = this.element.querySelector('.transition-overlay');
-    gsap.to(overlay, {
-      opacity: 0.15,
-      duration: 0.3,
-      ease: 'power2.inOut'
-    });
-  }
+  return (
+    <div className="page-transition-wrapper">
+      <div ref={overlayRef} className="transition-overlay"></div>
+      {children}
+    </div>
+  );
+};
 
-  static end() {
-    if (!this.element) return;
-    
-    const overlay = this.element.querySelector('.transition-overlay');
-    gsap.to(overlay, {
-      opacity: 0,
-      duration: 0.3,
-      ease: 'power2.inOut',
-      delay: 0.2
-    });
-  }
-}
+export default PageTransition;

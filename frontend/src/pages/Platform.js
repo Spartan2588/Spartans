@@ -1,12 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { DataDashboard } from '../components/DataDashboard.js';
 import '../styles/pages/platform.css';
 
-export class PlatformPage {
-  constructor() {
-    this.dashboard = null;
-  }
+const Platform = () => {
+  const containerRef = useRef(null);
 
-  async render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="platform">
         <div class="platform-hero">
@@ -22,14 +24,15 @@ export class PlatformPage {
       </div>
     `;
 
-    // Initialize DataDashboard
-    this.dashboard = new DataDashboard();
-    await this.dashboard.render(container.querySelector('#dashboard-container'));
-  }
+    const dashboard = new DataDashboard();
+    dashboard.render(container.querySelector('#dashboard-container'));
 
-  cleanup() {
-    if (this.dashboard) {
-      this.dashboard.cleanup();
-    }
-  }
-}
+    return () => {
+      if (dashboard.cleanup) dashboard.cleanup();
+    };
+  }, []);
+
+  return <div ref={containerRef}></div>;
+};
+
+export default Platform;

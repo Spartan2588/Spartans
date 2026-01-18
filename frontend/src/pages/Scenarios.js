@@ -1,11 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { ScenarioChat } from '../components/ScenarioChat.js';
 import '../styles/pages/scenarios.css';
 
-export class ScenariosPage {
-  constructor() {
-  }
+const Scenarios = () => {
+  const containerRef = useRef(null);
 
-  render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="scenarios">
         <div class="scenarios-hero">
@@ -27,13 +30,12 @@ export class ScenariosPage {
       </div>
     `;
 
-    // Initialize chat
     const chatContainer = container.querySelector('.chat-container');
     const chat = new ScenarioChat();
     chat.render(chatContainer);
-  }
+  }, []);
 
-  cleanup() {
-    // City persists across pages
-  }
-}
+  return <div ref={containerRef}></div>;
+};
+
+export default Scenarios;

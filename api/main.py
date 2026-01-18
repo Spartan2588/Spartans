@@ -59,7 +59,13 @@ async def root():
 
 @app.on_event("startup")
 async def startup_event():
-    """Start background tasks on application startup."""
+    """Start background tasks and ensure DB tables exist on application startup."""
+    # Ensure tables exist
+    from .database import engine, Base
+    from . import models
+    Base.metadata.create_all(bind=engine)
+    print("Database tables verified/created")
+    
     # Start the demo data simulator for real-time predictions
     websocket_routes.start_simulator()
     print("WebSocket real-time data simulator started")

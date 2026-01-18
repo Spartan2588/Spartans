@@ -1,13 +1,16 @@
+import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ScenarioChat } from '../components/ScenarioChat.js';
 import gsap from 'gsap';
 import '../styles/pages/home.css';
 
-export class HomePage {
-  constructor() {
-    this.chat = null;
-  }
+const Home = () => {
+  const containerRef = useRef(null);
 
-  render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="home">
         <div class="hero-content">
@@ -19,9 +22,7 @@ export class HomePage {
             <p class="hero-subheading">
               A living system for understanding urban futures.
             </p>
-            <a href="/platform" class="btn btn-primary" data-link>
-              Explore the Platform
-            </a>
+            <div id="home-cta-container"></div>
           </div>
           <div class="scroll-indicator">
             <div class="scroll-dot"></div>
@@ -52,17 +53,21 @@ export class HomePage {
       </div>
     `;
 
+    // Note: We can't easily render a React Link inside innerHTML.
+    // So we'll render it into a container using a separate React root or just use a standard link for now.
+    // Actually, for simplicity and making it "work", I'll use a normal anchor but prevent default and use navigate.
+    // Better: use the container method.
+
+    const ctaContainer = container.querySelector('#home-cta-container');
+    ctaContainer.innerHTML = `<a href="/platform" class="btn btn-primary" id="explore-btn">Explore the Platform</a>`;
+
     // Initialize chat
     const chatContainer = container.querySelector('.chat-container');
-    this.chat = new ScenarioChat();
-    this.chat.render(chatContainer);
+    const chat = new ScenarioChat();
+    chat.render(chatContainer);
 
-    // Animate vision cards on scroll
-    this.animateOnScroll();
-  }
-
-  animateOnScroll() {
-    const cards = document.querySelectorAll('.vision-card');
+    // Animate vision cards
+    const cards = container.querySelectorAll('.vision-card');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
@@ -81,9 +86,13 @@ export class HomePage {
       gsap.set(card, { opacity: 0, y: 30 });
       observer.observe(card);
     });
-  }
 
-  cleanup() {
-    // City persists across pages
-  }
-}
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return <div ref={containerRef}></div>;
+};
+
+export default Home;

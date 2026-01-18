@@ -8,6 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1",
     "gsap": "^3.12.2",
     "plotly.js-dist-min": "^2.26.0",
     "three": "^0.160.0"

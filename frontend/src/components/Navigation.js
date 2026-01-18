@@ -1,48 +1,59 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import '../styles/navigation.css';
 
-export class Navigation {
-  static render(container) {
-    container.innerHTML = `
-      <div class="nav-container">
-        <a href="/" class="nav-logo" data-link>
-          <span class="logo-icon">◆</span>
-          <span class="logo-text">Urban Risk</span>
-        </a>
+const Navigation = () => {
+  const [isActive, setIsActive] = useState(false);
+  const location = useLocation();
 
-        <button class="nav-toggle" id="nav-toggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+  const toggleMenu = () => {
+    setIsActive(!isActive);
+  };
 
-        <ul class="nav-menu" id="nav-menu">
-          <li><a href="/" class="nav-link active" data-link>Home</a></li>
-          <li><a href="/platform" class="nav-link" data-link>Platform</a></li>
-          <li><a href="/trends" class="nav-link" data-link>Trends</a></li>
-          <li><a href="/map" class="nav-link" data-link>Map</a></li>
-          <li><a href="/cascade" class="nav-link" data-link>Cascade</a></li>
-          <li><a href="/scenarios" class="nav-link" data-link>Scenarios</a></li>
-          <li><a href="/impact" class="nav-link" data-link>Impact</a></li>
-          <li><a href="/about" class="nav-link" data-link>About</a></li>
-        </ul>
-      </div>
-    `;
+  const closeMenu = () => {
+    setIsActive(false);
+  };
 
-    // Mobile menu toggle
-    const toggle = container.querySelector('#nav-toggle');
-    const menu = container.querySelector('#nav-menu');
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Platform', path: '/platform' },
+    { name: 'Scenarios', path: '/scenarios' },
+    { name: 'Impact', path: '/impact' },
+    { name: 'About', path: '/about' },
+  ];
 
-    toggle.addEventListener('click', () => {
-      toggle.classList.toggle('active');
-      menu.classList.toggle('active');
-    });
+  return (
+    <nav className="nav-container">
+      <Link to="/" className="nav-logo" onClick={closeMenu}>
+        <span className="logo-icon">◆</span>
+        <span className="logo-text">Urban Risk</span>
+      </Link>
 
-    // Close menu on link click
-    menu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        toggle.classList.remove('active');
-        menu.classList.remove('active');
-      });
-    });
-  }
-}
+      <button
+        className={`nav-toggle ${isActive ? 'active' : ''}`}
+        onClick={toggleMenu}
+        aria-label="Toggle navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={`nav-menu ${isActive ? 'active' : ''}`}>
+        {navLinks.map((link) => (
+          <li key={link.path}>
+            <Link
+              to={link.path}
+              className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+};
+
+export default Navigation;

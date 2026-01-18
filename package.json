@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node server.js",
-    "client": "cd client && npx vite",
-    "build": "cd client && vite build",
-    "preview": "cd client && vite preview"
+    "server": "python api/run.py",
+    "client": "cd frontend && npm run dev",
+    "server:node": "node server.js",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

@@ -1,10 +1,13 @@
+import React, { useEffect, useRef } from 'react';
 import '../styles/pages/about.css';
 
-export class AboutPage {
-  constructor() {
-  }
+const About = () => {
+  const containerRef = useRef(null);
 
-  render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="about">
         <div class="about-hero">
@@ -42,9 +45,9 @@ export class AboutPage {
         </section>
       </div>
     `;
-  }
+  }, []);
 
-  cleanup() {
-    // City persists across pages
-  }
-}
+  return <div ref={containerRef}></div>;
+};
+
+export default About;
