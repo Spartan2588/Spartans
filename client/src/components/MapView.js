@@ -12,9 +12,15 @@ export class MapView {
     this.currentCity = 1;
     this.currentState = null;
     this.currentRisks = null;
+    this.cascadeData = null;
     this.selectedLayer = 'environmental';
     this.canvas = null;
     this.ctx = null;
+    this.cities = [
+      { id: 1, name: 'Mumbai', lat: 19.0760, lng: 72.8777, x: 0.3, y: 0.5 },
+      { id: 2, name: 'Delhi', lat: 28.7041, lng: 77.1025, x: 0.6, y: 0.3 },
+      { id: 3, name: 'Bangalore', lat: 12.9716, lng: 77.5946, x: 0.5, y: 0.7 }
+    ];
   }
 
   async render(container) {
@@ -74,7 +80,7 @@ export class MapView {
       const newRect = this.canvas.parentElement.getBoundingClientRect();
       this.canvas.width = newRect.width;
       this.canvas.height = newRect.height;
-      this.render();
+      this.draw();
     });
   }
 
@@ -84,12 +90,20 @@ export class MapView {
 
     layerSelect.addEventListener('change', (e) => {
       this.selectedLayer = e.target.value;
-      this.render();
+      this.draw();
     });
 
     refreshBtn.addEventListener('click', () => {
       this.loadData();
       gsap.to(refreshBtn, { rotation: 360, duration: 0.6 });
+    });
+
+    // City marker clicks
+    this.canvas.addEventListener('click', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      this.handleCityClick(x, y);
     });
 
     // Listen for city changes
@@ -106,22 +120,24 @@ export class MapView {
 
   async loadData() {
     try {
-      const [state, risks] = await Promise.all([
+      const [state, risks, cascade] = await Promise.all([
         this.api.getCurrentState(this.currentCity),
-        this.api.getRiskAssessment(this.currentCity)
+        this.api.getRiskAssessment(this.currentCity),
+        this.api.getCascadingFailure(this.currentCity, 'power', 0.7, 24).catch(() => null)
       ]);
 
       this.currentState = state;
       this.currentRisks = risks;
+      this.cascadeData = cascade;
 
       this.updateCityInfo();
-      this.render();
+      this.draw();
     } catch (error) {
       console.error('Failed to load map data:', error);
     }
   }
 
-  render() {
+  draw() {
     if (!this.ctx) return;
 
     const width = this.canvas.width;
@@ -149,6 +165,9 @@ export class MapView {
         this.drawCombinedLayer();
         break;
     }
+
+    // Draw city markers
+    this.drawCityMarkers();
 
     // Draw grid and labels
     this.drawGrid();
@@ -358,34 +377,126 @@ export class MapView {
     const infoPanel = document.querySelector('#map-city-info');
     if (!infoPanel || !this.currentState) return;
 
+    const envRisk = this.currentRisks?.environmental_risk;
+    const healthRisk = this.currentRisks?.health_risk;
+    const foodRisk = this.currentRisks?.food_security_risk;
+
     infoPanel.innerHTML = `
-      <div class="city-info-item">
-        <span class="info-label">${this.currentState.city}</span>
-        <span class="info-value">${this.currentState.aqi} AQI</span>
+      <div class="city-info-header">
+        <h3>${this.currentState.city}</h3>
+        <span class="live-badge">● LIVE</span>
       </div>
-      <div class="city-info-item">
-        <span class="info-label">Temperature</span>
-        <span class="info-value">${this.currentState.temperature}°C</span>
+      <div class="city-info-grid">
+        <div class="info-item">
+          <span class="label">AQI</span>
+          <span class="value">${Math.round(this.currentState.aqi)}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Temperature</span>
+          <span class="value">${this.currentState.temperature.toFixed(1)}°C</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Hospital Load</span>
+          <span class="value">${Math.round(this.currentState.hospital_load)}%</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Traffic</span>
+          <span class="value">${this.currentState.traffic_density}</span>
+        </div>
+      </div>
+      <div class="risk-summary">
+        <div class="risk-item">
+          <span>Environmental</span>
+          <div class="risk-bar">
+            <div class="risk-fill" style="width: ${envRisk?.probability || 0}%; background: ${this.getRiskColor(envRisk?.score || 0)};"></div>
+          </div>
+          <span>${envRisk?.probability || 0}%</span>
+        </div>
+        <div class="risk-item">
+          <span>Health</span>
+          <div class="risk-bar">
+            <div class="risk-fill" style="width: ${healthRisk?.probability || 0}%; background: ${this.getRiskColor(healthRisk?.score || 0)};"></div>
+          </div>
+          <span>${healthRisk?.probability || 0}%</span>
+        </div>
+        <div class="risk-item">
+          <span>Food Security</span>
+          <div class="risk-bar">
+            <div class="risk-fill" style="width: ${foodRisk?.probability || 0}%; background: ${this.getRiskColor(foodRisk?.score || 0)};"></div>
+          </div>
+          <span>${foodRisk?.probability || 0}%</span>
+        </div>
       </div>
     `;
 
     const legendPanel = document.querySelector('#map-legend');
-    if (legendPanel) {
+    if (legendPanel && this.cascadeData) {
+      const cascadeCount = this.cascadeData.cascades?.length || 0;
       legendPanel.innerHTML = `
-        <div class="legend-title">Risk Levels</div>
-        <div class="legend-item">
-          <span class="legend-color" style="background: #10b981;"></span>
-          <span>Low</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background: #f59e0b;"></span>
-          <span>Medium</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background: #ef4444;"></span>
-          <span>High</span>
+        <div class="legend-title">Cascade Analysis</div>
+        <div class="cascade-info">
+          <span>Trigger: ${this.cascadeData.trigger?.domain || 'N/A'}</span>
+          <span>Cascades: ${cascadeCount}</span>
+          <span>Peak: ${this.cascadeData.total_impact?.peak_total_severity?.toFixed(2) || 'N/A'}</span>
         </div>
       `;
+    }
+  }
+
+  drawCityMarkers() {
+    const width = this.canvas.width;
+    const height = this.canvas.height;
+    const padding = 40;
+
+    this.cities.forEach(city => {
+      const x = padding + city.x * (width - padding * 2);
+      const y = padding + city.y * (height - padding * 2);
+      const radius = city.id === this.currentCity ? 20 : 15;
+
+      // Glow effect for selected city
+      if (city.id === this.currentCity) {
+        this.ctx.shadowColor = '#06b6d4';
+        this.ctx.shadowBlur = 20;
+      }
+
+      // Draw marker
+      this.ctx.fillStyle = city.id === this.currentCity ? '#06b6d4' : '#a78bfa';
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      this.ctx.shadowBlur = 0;
+
+      // Inner circle
+      this.ctx.fillStyle = '#1e293b';
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, radius - 4, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      // City name
+      this.ctx.fillStyle = '#e2e8f0';
+      this.ctx.font = 'bold 12px Inter';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(city.name, x, y - radius - 10);
+
+      // Store hit area for click detection
+      city.hitArea = { x, y, radius: radius + 5 };
+    });
+  }
+
+  handleCityClick(clickX, clickY) {
+    for (const city of this.cities) {
+      if (!city.hitArea) continue;
+
+      const dx = clickX - city.hitArea.x;
+      const dy = clickY - city.hitArea.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance <= city.hitArea.radius) {
+        this.currentCity = city.id;
+        this.loadData();
+        break;
+      }
     }
   }
 
@@ -435,7 +546,7 @@ export class MapView {
   syncWithScenario(scenario) {
     if (scenario.intervention) {
       this.currentRisks = scenario.intervention;
-      this.render();
+      this.draw();
     }
   }
 

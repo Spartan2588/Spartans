@@ -22,7 +22,6 @@ export class Navigation {
           <li><a href="/map" class="nav-link" data-link>Map</a></li>
           <li><a href="/cascade" class="nav-link" data-link>Cascade</a></li>
           <li><a href="/scenarios" class="nav-link" data-link>Scenarios</a></li>
-          <li><a href="/impact" class="nav-link" data-link>Impact</a></li>
           <li><a href="/about" class="nav-link" data-link>About</a></li>
         </ul>
       </div>
