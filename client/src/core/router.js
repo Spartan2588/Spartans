@@ -22,6 +22,10 @@ export class Router {
       '/trends': TrendsPage,
       '/map': MapPage,
       '/cascade': CascadePage,
+      '/gov-dashboard': GovDashboardPage,
+      '/hospital-dashboard': HospitalDashboardPage,
+      '/user-portal': UserPortalPage,
+      // Legacy routes for backward compatibility
       '/gov': GovDashboardPage,
       '/hospital': HospitalDashboardPage,
       '/user': UserPortalPage

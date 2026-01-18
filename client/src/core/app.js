@@ -13,7 +13,8 @@ export function initializeApp() {
 
   // Initialize navigation
   const navContainer = document.getElementById('navigation');
-  Navigation.render(navContainer);
+  const navigation = new Navigation();
+  navigation.render(navContainer);
 
   // Initialize page transition
   const transitionContainer = document.getElementById('page-transition');

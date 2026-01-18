@@ -1,4 +1,4 @@
-import { Auth, PortalType } from '../utils/auth.js';
+import { authService } from '../utils/auth.js';
 import { LoginModal } from '../components/LoginModal.js';
 import { ApiClient } from '../utils/api.js';
 import gsap from 'gsap';
@@ -16,26 +16,39 @@ export class UserPortalPage {
         this.currentRisks = null;
         this.userLocation = null;
         this.updateInterval = null;
+        this.currentUser = authService.getCurrentUser();
+        this.loginModal = new LoginModal();
+        
+        // Listen for auth events
+        window.addEventListener('user-signed-in', (e) => {
+            this.currentUser = e.detail;
+            this.updateRoleBasedContent();
+        });
+        
+        window.addEventListener('user-signed-out', () => {
+            this.currentUser = null;
+            this.updateRoleBasedContent();
+        });
     }
 
     async render(container) {
-        // Check authentication
-        if (!Auth.isLoggedIn(PortalType.USER)) {
+        // Check authentication - allow all users but show different content
+        if (!authService.isSignedIn()) {
             this.showLoginRequired(container);
             return;
         }
 
-        const session = Auth.getSession(PortalType.USER);
+        const user = authService.getCurrentUser();
 
         container.innerHTML = `
       <div class="user-portal">
         <!-- Top Bar -->
         <div class="dashboard-topbar user-topbar">
           <div class="topbar-info">
-            <span class="portal-badge user-badge">👤 Citizen Portal</span>
-            <span class="session-info">Welcome, ${session.name}</span>
+            <span class="portal-badge user-badge">👤 ${this.getRoleDisplayName()} Portal</span>
+            <span class="session-info">Welcome, ${user.displayName}</span>
           </div>
-          <button class="btn btn-logout user-logout" id="logout-btn">Logout</button>
+          <button class="btn btn-logout user-logout" id="logout-btn">Sign Out</button>
         </div>
 
         <!-- Safety Status Hero -->
@@ -90,30 +103,11 @@ export class UserPortalPage {
           </div>
         </section>
 
-        <!-- Safety Actions -->
+        <!-- Role-based Actions -->
         <section class="actions-section">
           <h2>Quick Actions</h2>
-          <div class="actions-grid">
-            <a href="/map" class="action-card glass" data-link>
-              <span class="action-icon">🗺️</span>
-              <span class="action-text">View Map</span>
-              <span class="action-desc">See real-time AQI in your area</span>
-            </a>
-            <div class="action-card glass" id="share-location-btn">
-              <span class="action-icon">📍</span>
-              <span class="action-text">Share Location</span>
-              <span class="action-desc">Get hyperlocal updates</span>
-            </div>
-            <div class="action-card glass" id="emergency-btn">
-              <span class="action-icon">🚨</span>
-              <span class="action-text">Emergency Info</span>
-              <span class="action-desc">Helpline numbers & resources</span>
-            </div>
-            <a href="/trends" class="action-card glass" data-link>
-              <span class="action-icon">📊</span>
-              <span class="action-text">View Trends</span>
-              <span class="action-desc">Historical data analysis</span>
-            </a>
+          <div class="actions-grid" id="actions-grid">
+            ${this.renderRoleBasedActions()}
           </div>
         </section>
 
@@ -155,20 +149,114 @@ export class UserPortalPage {
       <div class="login-required">
         <div class="login-required-content glass user-login-box">
           <span class="lock-icon">🔒</span>
-          <h2>Citizen Portal Access</h2>
-          <p>Login to access personalized safety information and local alerts.</p>
-          <button class="btn btn-primary user-login-btn" id="login-trigger">Login as Citizen</button>
+          <h2>User Portal Access</h2>
+          <p>Sign in to access personalized safety information and local alerts.</p>
+          <button class="btn btn-primary user-login-btn" id="login-trigger">Sign In</button>
           <a href="/" class="back-link" data-link>← Back to Home</a>
         </div>
       </div>
     `;
 
         container.querySelector('#login-trigger').addEventListener('click', () => {
-            const modal = new LoginModal(PortalType.USER, () => {
-                this.render(container);
-            });
-            modal.render();
+            this.loginModal.show();
         });
+    }
+
+    getRoleDisplayName() {
+        if (!this.currentUser) return 'User';
+        
+        switch (this.currentUser.role) {
+            case 'government':
+                return 'Government';
+            case 'medical':
+                return 'Medical';
+            case 'citizen':
+                return 'Citizen';
+            default:
+                return 'User';
+        }
+    }
+
+    renderRoleBasedActions() {
+        const baseActions = [
+            {
+                href: '/map',
+                icon: '🗺️',
+                text: 'View Map',
+                desc: 'See real-time AQI in your area',
+                roles: ['citizen', 'government', 'medical']
+            },
+            {
+                id: 'share-location-btn',
+                icon: '📍',
+                text: 'Share Location',
+                desc: 'Get hyperlocal updates',
+                roles: ['citizen', 'government', 'medical']
+            },
+            {
+                id: 'emergency-btn',
+                icon: '🚨',
+                text: 'Emergency Info',
+                desc: 'Helpline numbers & resources',
+                roles: ['citizen', 'government', 'medical']
+            },
+            {
+                href: '/trends',
+                icon: '📊',
+                text: 'View Trends',
+                desc: 'Historical data analysis',
+                roles: ['citizen', 'government', 'medical']
+            }
+        ];
+
+        // Add role-specific actions
+        const roleSpecificActions = [];
+        
+        if (this.currentUser && this.currentUser.role === 'government') {
+            roleSpecificActions.push({
+                href: '/gov-dashboard',
+                icon: '🏛️',
+                text: 'Gov Dashboard',
+                desc: 'Policy & planning tools',
+                roles: ['government']
+            });
+        }
+
+        if (this.currentUser && this.currentUser.role === 'medical') {
+            roleSpecificActions.push({
+                href: '/hospital-dashboard',
+                icon: '🏥',
+                text: 'Hospital Dashboard',
+                desc: 'Healthcare system metrics',
+                roles: ['medical']
+            });
+        }
+
+        const allActions = [...baseActions, ...roleSpecificActions];
+        const userRole = this.currentUser ? this.currentUser.role : 'citizen';
+        
+        return allActions
+            .filter(action => action.roles.includes(userRole))
+            .map(action => {
+                if (action.href) {
+                    return `
+                        <a href="${action.href}" class="action-card glass" data-link>
+                            <span class="action-icon">${action.icon}</span>
+                            <span class="action-text">${action.text}</span>
+                            <span class="action-desc">${action.desc}</span>
+                        </a>
+                    `;
+                } else {
+                    return `
+                        <div class="action-card glass" id="${action.id}">
+                            <span class="action-icon">${action.icon}</span>
+                            <span class="action-text">${action.text}</span>
+                            <span class="action-desc">${action.desc}</span>
+                        </div>
+                    `;
+                }
+            })
+            .join('');
     }
 
     setupEventListeners(container) {
@@ -179,37 +267,94 @@ export class UserPortalPage {
         const emergencyModal = container.querySelector('#emergency-modal');
         const closeEmergency = container.querySelector('#close-emergency');
 
-        logoutBtn.addEventListener('click', () => {
-            Auth.logout(PortalType.USER);
-            window.location.href = '/';
-        });
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                authService.signOut();
+                window.location.href = '/';
+            });
+        }
 
-        citySelect.addEventListener('change', (e) => {
-            this.currentCity = parseInt(e.target.value);
-            this.loadData();
-        });
+        if (citySelect) {
+            citySelect.addEventListener('change', (e) => {
+                this.currentCity = parseInt(e.target.value);
+                this.loadData();
+            });
+        }
 
-        shareLocationBtn.addEventListener('click', () => {
-            this.requestLocation();
-        });
+        if (shareLocationBtn) {
+            shareLocationBtn.addEventListener('click', () => {
+                this.requestLocation();
+            });
+        }
 
-        emergencyBtn.addEventListener('click', () => {
-            emergencyModal.style.display = 'flex';
-            gsap.fromTo(emergencyModal.querySelector('.emergency-content'),
-                { opacity: 0, scale: 0.9 },
-                { opacity: 1, scale: 1, duration: 0.2 }
-            );
-        });
+        if (emergencyBtn) {
+            emergencyBtn.addEventListener('click', () => {
+                emergencyModal.style.display = 'flex';
+                gsap.fromTo(emergencyModal.querySelector('.emergency-content'),
+                    { opacity: 0, scale: 0.9 },
+                    { opacity: 1, scale: 1, duration: 0.2 }
+                );
+            });
+        }
 
-        closeEmergency.addEventListener('click', () => {
-            emergencyModal.style.display = 'none';
-        });
-
-        emergencyModal.addEventListener('click', (e) => {
-            if (e.target === emergencyModal) {
+        if (closeEmergency) {
+            closeEmergency.addEventListener('click', () => {
                 emergencyModal.style.display = 'none';
-            }
-        });
+            });
+        }
+
+        if (emergencyModal) {
+            emergencyModal.addEventListener('click', (e) => {
+                if (e.target === emergencyModal) {
+                    emergencyModal.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    updateRoleBasedContent() {
+        // Update actions grid if it exists
+        const actionsGrid = document.querySelector('#actions-grid');
+        if (actionsGrid) {
+            actionsGrid.innerHTML = this.renderRoleBasedActions();
+            this.setupActionEventListeners();
+        }
+
+        // Update portal badge if it exists
+        const portalBadge = document.querySelector('.portal-badge');
+        if (portalBadge) {
+            portalBadge.textContent = `👤 ${this.getRoleDisplayName()} Portal`;
+        }
+
+        // Update session info if it exists
+        const sessionInfo = document.querySelector('.session-info');
+        if (sessionInfo && this.currentUser) {
+            sessionInfo.textContent = `Welcome, ${this.currentUser.displayName}`;
+        }
+    }
+
+    setupActionEventListeners() {
+        const shareLocationBtn = document.querySelector('#share-location-btn');
+        const emergencyBtn = document.querySelector('#emergency-btn');
+
+        if (shareLocationBtn) {
+            shareLocationBtn.addEventListener('click', () => {
+                this.requestLocation();
+            });
+        }
+
+        if (emergencyBtn) {
+            emergencyBtn.addEventListener('click', () => {
+                const emergencyModal = document.querySelector('#emergency-modal');
+                if (emergencyModal) {
+                    emergencyModal.style.display = 'flex';
+                    gsap.fromTo(emergencyModal.querySelector('.emergency-content'),
+                        { opacity: 0, scale: 0.9 },
+                        { opacity: 1, scale: 1, duration: 0.2 }
+                    );
+                }
+            });
+        }
     }
 
     async requestLocation() {

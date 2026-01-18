@@ -1,0 +1,13 @@
+✅ FIXES APPLIED:
+
+1. Removed outdated plotly-latest.min.js CDN script from index.html
+   - This was causing conflicts with the npm package version
+   - Now using only plotly.js-dist-min from package.json
+
+2. Plotly is properly imported in CascadingFailureViz.js:
+   - import Plotly from 'plotly.js-dist-min'; (line 5)
+   - Used correctly in renderCharts() methods
+
+The 500 error should be resolved. The frontend will now use the npm package version of Plotly instead of the conflicting CDN version.
+
+If you still see errors, refresh the browser (Ctrl+F5 to clear cache).

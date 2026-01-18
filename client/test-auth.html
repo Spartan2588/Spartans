@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #e2e8f0;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(30, 30, 60, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        button {
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        .user-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Authentication System Test</h1>
+    
+    <div class="test-section">
+        <h2>Current User Status</h2>
+        <div id="user-status">Not signed in</div>
+        <button onclick="checkStatus()">Refresh Status</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Sign In Tests</h2>
+        <button onclick="testCitizenSignIn()">Test Citizen Sign In</button>
+        <button onclick="testGovernmentSignIn()">Test Government Sign In</button>
+        <button onclick="testMedicalSignIn()">Test Medical Sign In</button>
+        <button onclick="testInvalidSignIn()">Test Invalid Sign In</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Sign Out</h2>
+        <button onclick="signOut()">Sign Out</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script type="module">
+        import { authService } from './src/utils/auth.js';
+        import { LoginModal } from './src/components/LoginModal.js';
+
+        window.authService = authService;
+        window.LoginModal = LoginModal;
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('user-status');
+            const user = authService.getCurrentUser();
+            
+            if (user) {
+                statusDiv.innerHTML = `
+                    <div class="user-info">
+                        <strong>Signed in as:</strong> ${user.displayName}<br>
+                        <strong>Role:</strong> ${user.role}<br>
+                        <strong>Name:</strong> ${user.name}<br>
+                        ${user.licenseNumber ? `<strong>License:</strong> ${user.licenseNumber}<br>` : ''}
+                        <strong>Sign-in time:</strong> ${new Date(user.signInTime).toLocaleString()}
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = '<div>Not signed in</div>';
+            }
+        }
+
+        function addTestResult(test, success, message) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = success ? 'user-info' : 'error';
+            resultDiv.innerHTML = `<strong>${test}:</strong> ${success ? 'PASS' : 'FAIL'} - ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Global functions for buttons
+        window.checkStatus = updateStatus;
+
+        window.testCitizenSignIn = function() {
+            const result = authService.signIn({
+                name: 'John Doe',
+                role: 'citizen'
+            });
+            
+            addTestResult('Citizen Sign In', result.success, result.success ? 'Successfully signed in as citizen' : result.error);
+            updateStatus();
+        };
+
+        window.testGovernmentSignIn = function() {
+            const result = authService.signIn({
+                name: 'Jane Smith',
+                role: 'government',
+                licenseNumber: 'GOV123456'
+            });
+            
+            addTestResult('Government Sign In', result.success, result.success ? 'Successfully signed in as government' : result.error);
+            updateStatus();
+        };
+
+        window.testMedicalSignIn = function() {
+            const result = authService.signIn({
+                name: 'Dr. Mike Johnson',
+                role: 'medical',
+                licenseNumber: 'MED12345678'
+            });
+            
+            addTestResult('Medical Sign In', result.success, result.success ? 'Successfully signed in as medical professional' : result.error);
+            updateStatus();
+        };
+
+        window.testInvalidSignIn = function() {
+            const result = authService.signIn({
+                name: '',
+                role: 'government',
+                licenseNumber: 'short'
+            });
+            
+            addTestResult('Invalid Sign In', !result.success, result.success ? 'Should have failed but succeeded' : `Correctly failed: ${result.error}`);
+            updateStatus();
+        };
+
+        window.signOut = function() {
+            const result = authService.signOut();
+            addTestResult('Sign Out', result.success, result.success ? 'Successfully signed out' : 'Failed to sign out');
+            updateStatus();
+        };
+
+        window.showLoginModal = function() {
+            const modal = new LoginModal();
+            modal.show();
+        };
+
+        // Listen for auth events
+        window.addEventListener('user-signed-in', (e) => {
+            addTestResult('Auth Event', true, `user-signed-in event fired for ${e.detail.displayName}`);
+            updateStatus();
+        });
+
+        window.addEventListener('user-signed-out', () => {
+            addTestResult('Auth Event', true, 'user-signed-out event fired');
+            updateStatus();
+        });
+
+        // Initial status update
+        updateStatus();
+    </script>
+
+    <div class="test-section">
+        <h2>Login Modal Test</h2>
+        <button onclick="showLoginModal()">Show Login Modal</button>
+    </div>
+</body>
+</html>
