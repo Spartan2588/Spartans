@@ -1,3 +1,4 @@
+
 import { ApiClient } from '../utils/api.js';
 import gsap from 'gsap';
 import '../styles/components/data-dashboard.css';
@@ -62,8 +63,6 @@ export class DataDashboard {
   setupEventListeners(container) {
     const citySelect = container.querySelector('#city-select');
     const refreshBtn = container.querySelector('#refresh-btn');
-    const simulateBtn = container.querySelector('#simulate-btn');
-    const sliders = container.querySelectorAll('.slider');
 
     citySelect.addEventListener('change', (e) => {
       this.currentCity = e.target.value;

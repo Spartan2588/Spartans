@@ -1,3 +1,4 @@
+
 import gsap from 'gsap';
 import { ApiClient } from '../utils/api.js';
 import { ScenarioResults } from './ScenarioResults.js';
@@ -130,7 +131,7 @@ export class ScenarioChat {
     const metricsContainer = document.querySelector('#current-metrics');
 
     try {
-      console.log(`[ScenarioChat] Fetching current metrics for ${this.selectedCity}`);
+      console.log(\`[ScenarioChat] Fetching current metrics for \${this.selectedCity}\`);
       const data = await this.api.getCurrentState(this.selectedCity);
 
       // Store metrics
@@ -153,12 +154,12 @@ export class ScenarioChat {
 
     } catch (error) {
       console.error('Failed to fetch current metrics:', error);
-      metricsContainer.innerHTML = `
+      metricsContainer.innerHTML = \`
         <div class="metrics-error">
           <span class="error-icon">⚠️</span>
           <span>Unable to load current conditions. Using estimated values.</span>
         </div>
-      `;
+      \`;
 
       // Set default estimated values
       this.currentMetrics = {
@@ -187,33 +188,33 @@ export class ScenarioChat {
       return 'Recent data';
     };
 
-    container.innerHTML = `
+    container.innerHTML = \`
       <div class="current-metrics-card">
         <div class="metrics-header">
           <span class="metrics-icon">📊</span>
-          <h4>Current Conditions — ${this.selectedCity}</h4>
-          <span class="freshness-badge">${formatFreshness(data.data_freshness)}</span>
+          <h4>Current Conditions — \${this.selectedCity}</h4>
+          <span class="freshness-badge">\${formatFreshness(data.data_freshness)}</span>
         </div>
         <div class="metrics-row">
           <div class="metric-item">
             <span class="metric-label">AQI</span>
-            <span class="metric-value">${data.aqi?.toFixed(0) || 'N/A'}</span>
+            <span class="metric-value">\${data.aqi?.toFixed(0) || 'N/A'}</span>
           </div>
           <div class="metric-item">
             <span class="metric-label">Temperature</span>
-            <span class="metric-value">${data.temperature?.toFixed(1) || 'N/A'}°C</span>
+            <span class="metric-value">\${data.temperature?.toFixed(1) || 'N/A'}°C</span>
           </div>
           <div class="metric-item">
             <span class="metric-label">Hospital Load</span>
-            <span class="metric-value">${(data.hospital_load || data.bed_occupancy_percent)?.toFixed(0) || 'N/A'}%</span>
+            <span class="metric-value">\${(data.hospital_load || data.bed_occupancy_percent)?.toFixed(0) || 'N/A'}%</span>
           </div>
           <div class="metric-item">
             <span class="metric-label">Food Availability</span>
-            <span class="metric-value">${data.crop_supply_index?.toFixed(0) || 'N/A'}%</span>
+            <span class="metric-value">\${data.crop_supply_index?.toFixed(0) || 'N/A'}%</span>
           </div>
         </div>
       </div>
-    `;
+    \`;
 
     // Animate in
     gsap.from(container.querySelector('.current-metrics-card'), {
@@ -231,7 +232,7 @@ export class ScenarioChat {
   async handleScenarioQuery(query) {
     if (this.isLoading) return;
 
-    console.log(`[ScenarioChat] Processing query: "${query}"`);
+    console.log(\`[ScenarioChat] Processing query: "\${query}"\`);
 
     // Call delta-based API with custom_prompt
     await this.runSimulation({
@@ -246,7 +247,7 @@ export class ScenarioChat {
   async handlePresetScenario(scenarioType) {
     if (this.isLoading) return;
 
-    console.log(`[ScenarioChat] Running preset scenario: ${scenarioType}`);
+    console.log(\`[ScenarioChat] Running preset scenario: \${scenarioType}\`);
 
     // Call delta-based API with scenario_type
     await this.runSimulation({
@@ -261,7 +262,7 @@ export class ScenarioChat {
   async runSimulationWithDeltas(customDeltas) {
     if (this.isLoading) return;
 
-    console.log(`[ScenarioChat] Running simulation with custom deltas:`, customDeltas);
+    console.log(\`[ScenarioChat] Running simulation with custom deltas:\`, customDeltas);
 
     await this.runSimulation({
       city: this.selectedCity,
@@ -280,12 +281,12 @@ export class ScenarioChat {
 
     // Show loading state
     gsap.to(btn, { opacity: 0.5, duration: 0.2 });
-    resultsContainer.innerHTML = `
+    resultsContainer.innerHTML = \`
       <div class="simulation-loading">
         <div class="loading-spinner"></div>
         <span>Running simulation...</span>
       </div>
-    `;
+    \`;
 
     try {
       // Call the NEW delta-based endpoint
@@ -325,15 +326,15 @@ export class ScenarioChat {
     } catch (error) {
       console.error('[ScenarioChat] Simulation failed:', error);
 
-      resultsContainer.innerHTML = `
+      resultsContainer.innerHTML = \`
         <div class="simulation-error">
           <span class="error-icon">❌</span>
-          <span>Simulation failed: ${error.message}</span>
+          <span>Simulation failed: \${error.message}</span>
           <button class="retry-btn" onclick="this.closest('.scenario-chat').querySelector('#scenario-form').dispatchEvent(new Event('submit'))">
             Retry
           </button>
         </div>
-      `;
+      \`;
 
       // Error feedback
       const input = document.querySelector('#scenario-input');
@@ -352,16 +353,4 @@ export class ScenarioChat {
       gsap.to(btn, { opacity: 1, duration: 0.2 });
     }
   }
-
-  /**
-   * DEPRECATED: Old parseScenario method
-   * This method is NO LONGER used - kept for reference only
-   * All scenario parsing now happens on the backend using ScenarioDeltas
-   */
-  // parseScenario(query) {
-  //   // THIS FUNCTION IS INTENTIONALLY REMOVED
-  //   // It used hardcoded values which violated the requirements
-  //   // The backend now handles all scenario inference using deltas
-  //   throw new Error('parseScenario is deprecated - use delta-based API');
-  // }
 }

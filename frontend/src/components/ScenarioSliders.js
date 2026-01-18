@@ -1,256 +1,176 @@
+
 import gsap from 'gsap';
 import '../styles/components/scenario-sliders.css';
 
 /**
  * ScenarioSliders Component
- * Provides slider controls for manual metric adjustment.
- * Sliders are initialized from current metrics and update on scenario simulation.
+ * Interactive slider controls for manual scenario adjustments.
+ * Syncs with current baseline metrics and provides real-time feedback.
  */
 export class ScenarioSliders {
     constructor(onUpdate) {
-        this.onUpdate = onUpdate; // Callback for re-simulation
+        this.onUpdate = onUpdate; // Callback on simulation run
         this.container = null;
-        this.values = {
-            aqi: 100,
-            temperature: 30,
-            hospital_load: 50,
-            crop_supply: 70
-        };
-        this.baseline = null;
+        this.baselineValues = {};
+        this.currentValues = {};
+        this.lastInferredValues = null;
     }
 
     /**
-     * Set slider values from metrics
-     * @param {Object} metrics - Metrics object with aqi, temperature, hospital_load, crop_supply
-     * @param {boolean} isBaseline - If true, also update baseline reference
+     * Set the values for the sliders
+     * @param {Object} values - Key/Value pairs of metrics
+     * @param {boolean} isBaseline - Whether these are new baseline values
      */
-    setValues(metrics, isBaseline = false) {
-        if (metrics) {
-            this.values = {
-                aqi: metrics.aqi ?? 100,
-                temperature: metrics.temperature ?? 30,
-                hospital_load: metrics.hospital_load ?? 50,
-                crop_supply: metrics.crop_supply ?? 70
-            };
-
-            if (isBaseline) {
-                this.baseline = { ...this.values };
-            }
+    setValues(values, isBaseline = false) {
+        if (isBaseline) {
+            this.baselineValues = { ...values };
         }
-        this.updateSliderDisplays();
+        this.currentValues = { ...values };
+        this.updateSliderUI();
     }
 
-    /**
-     * Update slider UI to reflect current values
-     */
-    updateSliderDisplays() {
-        if (!this.container) return;
-
-        const sliders = {
-            aqi: this.container.querySelector('#slider-aqi'),
-            temperature: this.container.querySelector('#slider-temperature'),
-            hospital_load: this.container.querySelector('#slider-hospital_load'),
-            crop_supply: this.container.querySelector('#slider-crop_supply')
-        };
-
-        const displays = {
-            aqi: this.container.querySelector('#value-aqi'),
-            temperature: this.container.querySelector('#value-temperature'),
-            hospital_load: this.container.querySelector('#value-hospital_load'),
-            crop_supply: this.container.querySelector('#value-crop_supply')
-        };
-
-        for (const [key, slider] of Object.entries(sliders)) {
-            if (slider) {
-                slider.value = this.values[key];
-            }
-            if (displays[key]) {
-                const unit = key === 'temperature' ? '°C' : key === 'aqi' ? '' : '%';
-                displays[key].textContent = `${Math.round(this.values[key])}${unit}`;
-            }
-        }
-
-        // Update delta badges
-        this.updateDeltaBadges();
-    }
-
-    /**
-     * Update delta badges showing difference from baseline
-     */
-    updateDeltaBadges() {
-        if (!this.container || !this.baseline) return;
-
-        const deltas = {
-            aqi: this.container.querySelector('#delta-aqi'),
-            temperature: this.container.querySelector('#delta-temperature'),
-            hospital_load: this.container.querySelector('#delta-hospital_load'),
-            crop_supply: this.container.querySelector('#delta-crop_supply')
-        };
-
-        for (const [key, deltaEl] of Object.entries(deltas)) {
-            if (deltaEl) {
-                const diff = this.values[key] - this.baseline[key];
-                const sign = diff >= 0 ? '+' : '';
-                const unit = key === 'temperature' ? '°C' : key === 'aqi' ? '' : '%';
-                deltaEl.textContent = `${sign}${Math.round(diff)}${unit}`;
-                deltaEl.className = `slider-delta ${diff > 0 ? 'delta-up' : diff < 0 ? 'delta-down' : 'delta-neutral'}`;
-            }
-        }
-    }
-
-    /**
-     * Render sliders
-     * @param {HTMLElement} container - Container element
-     */
     render(container) {
         this.container = container;
-
-        container.innerHTML = `
-      <div class="scenario-sliders">
+        this.container.innerHTML = `
+      <div class="scenario-sliders glass">
         <div class="sliders-header">
-          <h4>Adjust Parameters</h4>
-          <button class="reset-btn" id="reset-sliders">Reset to Baseline</button>
-        </div>
-        
-        <div class="sliders-grid">
-          ${this.renderSlider('aqi', 'AQI', 0, 500, 1, '', 'Air Quality Index')}
-          ${this.renderSlider('temperature', 'Temperature', -10, 55, 0.5, '°C', 'Ambient Temperature')}
-          ${this.renderSlider('hospital_load', 'Hospital Load', 0, 100, 1, '%', 'Healthcare System Load')}
-          ${this.renderSlider('crop_supply', 'Food Availability', 0, 100, 1, '%', 'Urban Food Availability Index')}
+          <div class="header-main">
+            <h3>Scenario Parameters</h3>
+            <span class="header-subtitle">Adjust manually to explore risk ripples</span>
+          </div>
+          <button class="reset-sliders-btn" id="reset-sliders" title="Reset to baseline">
+            Reset to Baseline
+          </button>
         </div>
 
-        <button class="simulate-btn" id="run-simulation">
-          <span class="btn-icon">⚡</span>
-          Run Simulation
-        </button>
+        <div class="sliders-grid">
+          ${this.renderSlider('aqi', 'Air Quality (AQI)', 0, 500, '💨', 'Adjust atmospheric particulate matter')}
+          ${this.renderSlider('hospital_load', 'Hospital Load (%)', 0, 100, '🏥', 'Current patient occupancy strain')}
+          ${this.renderSlider('crop_supply', 'Food Availability (%)', 10, 100, '🌾', 'Urban food supply and availability')}
+          ${this.renderSlider('temperature', 'Temperature (°C)', -10, 55, '🌡️', 'Ambient city temperature')}
+        </div>
+
+        <div class="sliders-footer">
+          <button class="run-manual-simulation-btn" id="run-manual-sim">
+            <span class="btn-text">Run Manual Simulation</span>
+            <span class="btn-icon">⚡</span>
+          </button>
+        </div>
       </div>
     `;
 
         this.setupEventListeners();
-        this.updateSliderDisplays();
+        this.updateSliderUI();
     }
 
-    /**
-     * Render a single slider
-     */
-    renderSlider(key, label, min, max, step, unit, tooltip) {
+    renderSlider(id, label, min, max, icon, tooltip) {
+        const value = this.currentValues[id] ?? ((min + max) / 2);
+
         return `
-      <div class="slider-item" data-slider="${key}">
-        <div class="slider-header">
-          <label for="slider-${key}" title="${tooltip}">${label}</label>
-          <div class="slider-values">
-            <span class="slider-delta" id="delta-${key}">±0${unit}</span>
-            <span class="slider-value" id="value-${key}">${Math.round(this.values[key])}${unit}</span>
+      <div class="slider-item" data-slider="${id}">
+        <div class="slider-info">
+          <div class="slider-label-group">
+            <span class="slider-icon">${icon}</span>
+            <label for="slider-${id}">${label}</label>
+            <span class="slider-tooltip" title="${tooltip}">ⓘ</span>
+          </div>
+          <div class="value-display">
+            <span class="current-value" id="val-${id}">${value.toFixed(1)}</span>
+            <span class="baseline-reference" id="ref-${id}" title="Current baseline">/ ${this.baselineValues[id]?.toFixed(1) || '0.0'}</span>
           </div>
         </div>
-        <div class="slider-track-wrapper">
+        <div class="slider-input-wrapper">
           <input 
             type="range" 
-            id="slider-${key}"
-            min="${min}"
-            max="${max}"
-            step="${step}"
-            value="${this.values[key]}"
+            id="slider-${id}" 
+            min="${min}" 
+            max="${max}" 
+            value="${value}" 
+            step="${id === 'temperature' ? '0.1' : '1'}"
             class="slider-input"
-          />
-          <div class="slider-marks">
-            <span class="mark">${min}</span>
-            <span class="mark">${Math.round((max + min) / 2)}</span>
-            <span class="mark">${max}</span>
-          </div>
+          >
+          <div class="slider-track-fill"></div>
         </div>
       </div>
     `;
     }
 
-    /**
-     * Set up event listeners
-     */
     setupEventListeners() {
-        if (!this.container) return;
+        const inputs = this.container.querySelectorAll('.slider-input');
+        const resetBtn = this.container.querySelector('#reset-sliders');
+        const runBtn = this.container.querySelector('#run-manual-sim');
 
-        // Slider change events
-        const sliders = this.container.querySelectorAll('.slider-input');
-        sliders.forEach(slider => {
-            slider.addEventListener('input', (e) => {
-                const key = e.target.id.replace('slider-', '');
-                this.values[key] = parseFloat(e.target.value);
-                this.updateSliderDisplays();
-            });
-
-            // Add visual feedback on drag
-            slider.addEventListener('mousedown', () => {
-                gsap.to(slider.closest('.slider-item'), {
-                    boxShadow: '0 0 20px rgba(167, 139, 250, 0.2)',
-                    duration: 0.2
-                });
-            });
-
-            slider.addEventListener('mouseup', () => {
-                gsap.to(slider.closest('.slider-item'), {
-                    boxShadow: 'none',
-                    duration: 0.2
-                });
+        inputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const id = e.target.id.replace('slider-', '');
+                const val = parseFloat(e.target.value);
+                this.currentValues[id] = val;
+                this.updateValueDisplay(id, val);
             });
         });
 
-        // Reset button
-        const resetBtn = this.container.querySelector('#reset-sliders');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                if (this.baseline) {
-                    this.values = { ...this.baseline };
-                    this.updateSliderDisplays();
+        resetBtn.addEventListener('click', () => {
+            this.currentValues = { ...this.baselineValues };
+            this.updateSliderUI();
+            // Animate reset
+            gsap.to(inputs, { scale: 1.05, duration: 0.1, yoyo: true, repeat: 1 });
+        });
 
-                    // Animate reset
-                    gsap.to(sliders, {
-                        scale: 1.02,
-                        duration: 0.1,
-                        yoyo: true,
-                        repeat: 1
-                    });
-                }
-            });
-        }
+        runBtn.addEventListener('click', () => {
+            if (this.onUpdate) {
+                // Calculate deltas relative to baseline
+                const deltas = {
+                    aqi_delta: this.currentValues.aqi - this.baselineValues.aqi,
+                    temperature_delta: this.currentValues.temperature - this.baselineValues.temperature,
+                    hospital_load_delta: this.currentValues.hospital_load - this.baselineValues.hospital_load,
+                    crop_supply_delta: this.currentValues.crop_supply - this.baselineValues.crop_supply
+                };
+                this.onUpdate(deltas);
+            }
+        });
 
-        // Simulate button
-        const simulateBtn = this.container.querySelector('#run-simulation');
-        if (simulateBtn) {
-            simulateBtn.addEventListener('click', () => {
-                if (this.onUpdate) {
-                    // Calculate deltas from current values
-                    const customDeltas = this.baseline ? {
-                        aqi_delta: this.values.aqi - this.baseline.aqi,
-                        temperature_delta: this.values.temperature - this.baseline.temperature,
-                        hospital_load_delta: this.values.hospital_load - this.baseline.hospital_load,
-                        crop_supply_delta: this.values.crop_supply - this.baseline.crop_supply
-                    } : null;
+        // Animate presence
+        gsap.from(this.container.querySelector('.scenario-sliders'), {
+            opacity: 0,
+            x: -20,
+            duration: 0.6,
+            ease: 'power2.out'
+        });
+    }
 
-                    this.onUpdate(customDeltas);
+    updateValueDisplay(id, val) {
+        const display = this.container.querySelector(`#val-${id}`);
+        if (display) display.textContent = val.toFixed(1);
 
-                    // Button feedback
-                    gsap.to(simulateBtn, {
-                        scale: 0.95,
-                        duration: 0.1,
-                        yoyo: true,
-                        repeat: 1
-                    });
-                }
-            });
+        // Update track fill
+        const input = this.container.querySelector(`#slider-${id}`);
+        const min = parseFloat(input.min);
+        const max = parseFloat(input.max);
+        const percent = ((val - min) / (max - min)) * 100;
+
+        // Check if it's different from baseline to color the text
+        const baseline = this.baselineValues[id];
+        if (Math.abs(val - baseline) > 0.05) {
+            display.classList.add('value-changed');
+        } else {
+            display.classList.remove('value-changed');
         }
     }
 
-    /**
-     * Get current slider values as custom deltas
-     */
-    getCurrentDeltas() {
-        if (!this.baseline) return null;
+    updateSliderUI() {
+        if (!this.container) return;
 
-        return {
-            aqi_delta: this.values.aqi - this.baseline.aqi,
-            temperature_delta: this.values.temperature - this.baseline.temperature,
-            hospital_load_delta: this.values.hospital_load - this.baseline.hospital_load,
-            crop_supply_delta: this.values.crop_supply - this.baseline.crop_supply
-        };
+        Object.keys(this.currentValues).forEach(id => {
+            const input = this.container.querySelector(`#slider-${id}`);
+            if (input) {
+                input.value = this.currentValues[id];
+                this.updateValueDisplay(id, this.currentValues[id]);
+            }
+
+            const ref = this.container.querySelector(`#ref-${id}`);
+            if (ref) {
+                ref.textContent = `/ ${this.baselineValues[id]?.toFixed(1) || '0.0'}`;
+            }
+        });
     }
 }

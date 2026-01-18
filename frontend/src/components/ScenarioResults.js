@@ -1,3 +1,4 @@
+
 import gsap from 'gsap';
 import '../styles/components/scenario-results.css';
 
@@ -180,8 +181,6 @@ export class ScenarioResults {
     // BUT for Crop Supply, decrease is bad.
     // And AQI decrease is good.
     // Let's stick to generic: >0 red, <0 green? Or neutral class names and CSS handles it?
-    // Current CSS likely maps delta-increase to red?
-    // Let's keep logic simple: 
     const deltaClass = deltaNum > 0 ? 'delta-increase' : deltaNum < 0 ? 'delta-decrease' : 'delta-neutral';
     const deltaSign = deltaNum > 0 ? '+' : deltaNum < 0 ? '-' : '';
 

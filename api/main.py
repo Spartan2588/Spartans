@@ -435,3 +435,5 @@ async def get_scenario_presets():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+#   R e - a p p l i e d   s c e n a r i o   l o g i c  
+ 
