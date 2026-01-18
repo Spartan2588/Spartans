@@ -1,12 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { TrendAnalysis } from '../components/TrendAnalysis.js';
 import '../styles/pages/trends.css';
 
-export class TrendsPage {
-  constructor() {
-    this.trendAnalysis = null;
-  }
+const Trends = () => {
+  const containerRef = useRef(null);
 
-  async render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="trends-page">
         <div class="trends-hero">
@@ -22,14 +24,15 @@ export class TrendsPage {
       </div>
     `;
 
-    // Initialize TrendAnalysis
-    this.trendAnalysis = new TrendAnalysis();
-    await this.trendAnalysis.render(container.querySelector('#trend-container'));
-  }
+    const trendAnalysis = new TrendAnalysis();
+    trendAnalysis.render(container.querySelector('#trend-container'));
 
-  cleanup() {
-    if (this.trendAnalysis) {
-      this.trendAnalysis.cleanup();
-    }
-  }
-}
+    return () => {
+      if (trendAnalysis.cleanup) trendAnalysis.cleanup();
+    };
+  }, []);
+
+  return <div ref={containerRef}></div>;
+};
+
+export default Trends;

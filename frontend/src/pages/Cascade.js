@@ -1,12 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { CascadingFailureViz } from '../components/CascadingFailureViz.js';
 import '../styles/pages/cascade.css';
 
-export class CascadePage {
-  constructor() {
-    this.cascadeViz = null;
-  }
+const Cascade = () => {
+  const containerRef = useRef(null);
 
-  async render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="cascade-page">
         <div class="cascade-hero">
@@ -22,14 +24,15 @@ export class CascadePage {
       </div>
     `;
 
-    // Initialize CascadingFailureViz
-    this.cascadeViz = new CascadingFailureViz();
-    await this.cascadeViz.render(container.querySelector('#cascade-container'));
-  }
+    const cascadeViz = new CascadingFailureViz();
+    cascadeViz.render(container.querySelector('#cascade-container'));
 
-  cleanup() {
-    if (this.cascadeViz) {
-      this.cascadeViz.cleanup();
-    }
-  }
-}
+    return () => {
+      if (cascadeViz.cleanup) cascadeViz.cleanup();
+    };
+  }, []);
+
+  return <div ref={containerRef}></div>;
+};
+
+export default Cascade;

@@ -7,6 +7,9 @@ import Platform from './pages/Platform';
 import Scenarios from './pages/Scenarios';
 import Impact from './pages/Impact';
 import About from './pages/About';
+import Trends from './pages/Trends';
+import Map from './pages/Map';
+import Cascade from './pages/Cascade';
 import PageTransition from './components/PageTransition';
 
 function AppContent() {
@@ -29,6 +32,9 @@ function AppContent() {
           <Route path="/scenarios" element={<Scenarios />} />
           <Route path="/impact" element={<Impact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/trends" element={<Trends />} />
+          <Route path="/map" element={<Map />} />
+          <Route path="/cascade" element={<Cascade />} />
         </Routes>
       </PageTransition>
     </div>

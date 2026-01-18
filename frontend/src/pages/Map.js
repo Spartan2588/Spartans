@@ -1,12 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { MapView } from '../components/MapView.js';
 import '../styles/pages/map.css';
 
-export class MapPage {
-  constructor() {
-    this.mapView = null;
-  }
+const Map = () => {
+  const containerRef = useRef(null);
 
-  async render(container) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
     container.innerHTML = `
       <div class="map-page">
         <div class="map-hero">
@@ -22,14 +24,15 @@ export class MapPage {
       </div>
     `;
 
-    // Initialize MapView
-    this.mapView = new MapView();
-    await this.mapView.render(container.querySelector('#map-container'));
-  }
+    const mapView = new MapView();
+    mapView.render(container.querySelector('#map-container'));
 
-  cleanup() {
-    if (this.mapView) {
-      this.mapView.cleanup();
-    }
-  }
-}
+    return () => {
+      if (mapView.cleanup) mapView.cleanup();
+    };
+  }, []);
+
+  return <div ref={containerRef}></div>;
+};
+
+export default Map;

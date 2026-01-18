@@ -17,6 +17,9 @@ const Navigation = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Platform', path: '/platform' },
+    { name: 'Trends', path: '/trends' },
+    { name: 'Map', path: '/map' },
+    { name: 'Cascade', path: '/cascade' },
     { name: 'Scenarios', path: '/scenarios' },
     { name: 'Impact', path: '/impact' },
     { name: 'About', path: '/about' },
